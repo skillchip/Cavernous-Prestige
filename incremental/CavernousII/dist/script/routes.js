@@ -41,7 +41,7 @@ class Route {
             this.require = zones[currentZone].startStuff.map(s => {
                 return {
                     "name": s.name,
-                    "count": s.count - getStuff(s.name).min,
+                    "count": Math.round((s.count - getStuff(s.name).min)*1000)/1000, /*forcing rounding*/
                 };
             }).filter(s => s.count > 0);
             this.cloneArriveTimes = clones.filter(c => c.x == this.x && c.y == this.y).map(c => queueTime);
