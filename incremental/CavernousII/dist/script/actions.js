@@ -209,7 +209,7 @@ function canMineMana(location) {
 function mineManaRockCost(location, clone = null, realm = null, completionOveride) { /* Prestige, add mana rock reducer for point spend */
     return location.completions && !completionOveride
         ? 0
-        : Math.pow(1 + (0.1 + 0.05 * (location.zone.index + (realm == null ? currentRealm : realm))) * longZoneCompletionMult(location.x, location.y, location.zone.index) * (0.95 ** (prestige[3].level ** 0.75)), completionOveride ?? location.priorCompletions);
+        : Math.pow(1 + (0.1 + 0.05 * (location.zone.index + (realm == null ? currentRealm : realm))) * longZoneCompletionMult(location.x, location.y, location.zone.index) * (0.95 ** (prestige[2].level ** 0.75)), completionOveride ?? location.priorCompletions);
 } 
 function mineGemCost(location) {
     return (location.completions + 1) ** 1.4;
