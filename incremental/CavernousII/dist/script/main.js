@@ -466,6 +466,17 @@ function load() {
         prestige[5].level = saveGame.prestigeArray.value5;
         prestige[6].level = saveGame.prestigeArray.value6;   
     }
+    // Fix Prestige Values for Hover
+    document.querySelector("prestige#") = writeNumber(prestigecount));
+    document.querySelector("prestigeval0") = writeNumber(prestige[0].level));
+    document.querySelector("prestigeval1") = writeNumber(0.1*prestige[1].level));
+    document.querySelector("prestigeval2") = writeNumber(0.95 ** (prestige[2].level ** 0.75));
+    document.querySelector("prestigeval3") = writeNumber(0.1*prestige[3].level));
+    document.querySelector("prestigeval4") = writeNumber(0.1*prestige[4].level));
+    document.querySelector("prestigeval5a") = writeNumber(1+prestige[5].level));
+    document.querySelector("prestigeval5b") = writeNumber(20*prestige[5].level));
+    document.querySelector("prestigeval6") = writeNumber(prestige[6].level));
+    
     loadSettings(saveGame.settings);
     zones[0].queues[0].selected = true;
     queuesNode = queuesNode || document.querySelector("#queues");
@@ -477,6 +488,8 @@ function load() {
     changeRealms(saveGame.currentRealm);
     drawMap();
     applyCustomStyling();
+    
+    
 }
 function deleteSave() {
     if (localStorage[saveName])
