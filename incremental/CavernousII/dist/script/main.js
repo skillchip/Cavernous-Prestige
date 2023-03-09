@@ -182,6 +182,17 @@ function SoftCap()
 }
 */
 
+    // Fix Prestige Values for Hover
+    document.querySelector("prestigenumber") = writeNumber(prestigecount);
+    document.querySelector("prestigeval0") = writeNumber(prestige[0].level);
+    document.querySelector("prestigeval1") = writeNumber(0.1*prestige[1].level);
+    document.querySelector("prestigeval2") = writeNumber(0.95 ** (prestige[2].level ** 0.75));
+    document.querySelector("prestigeval3") = writeNumber(0.1*prestige[3].level);
+    document.querySelector("prestigeval4") = writeNumber(0.1*prestige[4].level);
+    document.querySelector("prestigeval5a") = writeNumber(1+prestige[5].level);
+    document.querySelector("prestigeval5b") = writeNumber(20*prestige[5].level);
+    document.querySelector("prestigeval6") = writeNumber(prestige[6].level);
+
 
 /** ****************************************** Prestiges ********************************************/
 let resetting = false;
@@ -478,18 +489,6 @@ function load() {
     changeRealms(saveGame.currentRealm);
     drawMap();
     applyCustomStyling();
-    // Fix Prestige Values for Hover
-    document.querySelector("prestigenumber") = writeNumber(prestigecount);
-    document.querySelector("prestigeval0") = writeNumber(prestige[0].level);
-    document.querySelector("prestigeval1") = writeNumber(0.1*prestige[1].level);
-    document.querySelector("prestigeval2") = writeNumber(0.95 ** (prestige[2].level ** 0.75));
-    document.querySelector("prestigeval3") = writeNumber(0.1*prestige[3].level);
-    document.querySelector("prestigeval4") = writeNumber(0.1*prestige[4].level);
-    document.querySelector("prestigeval5a") = writeNumber(1+prestige[5].level);
-    document.querySelector("prestigeval5b") = writeNumber(20*prestige[5].level);
-    document.querySelector("prestigeval6") = writeNumber(prestige[6].level);
-    
-    
 }
 function deleteSave() {
     if (localStorage[saveName])
