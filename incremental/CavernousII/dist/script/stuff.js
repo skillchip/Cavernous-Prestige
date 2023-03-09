@@ -91,7 +91,7 @@ function calcCombatStats() { /* Prestige, place to add stat increases */
 }
 function getStatBonus(name, mult) { /* Prestige, place to add stat increases */
     let stat = getStat(name);
-    return (oldAmount, amount) => stat.getBonus((Math.floor(amount + 0.01) - Math.floor(oldAmount + 0.01)) * mult);
+    return (oldAmount, amount) => stat.getBonus((Math.floor(amount + 0.01) - Math.floor(oldAmount + 0.01)) * mult *(1+0.1*prestige[4].level));
 }
 const stuff = [ /* Prestige, place to add stat increases */
     new Stuff("Gold Nugget", "•", "This is probably pretty valuable.  Shiny!", "#ffd700", 0),
