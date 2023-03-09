@@ -133,7 +133,7 @@ function getStuff(name) {
 function displayStuff(node, route) {
     function displaySingleThing(thing) {
         let stuff = getStuff(thing.name);
-        return `<span style="color: ${stuff.colour}">${thing.count}${stuff.icon}</span>`;
+        return `<span style="color: ${stuff.colour}">${(Math.round(thing.count*1000)/1000)}${stuff.icon}</span>`;
     }
     if (route.require?.length) {
         node.querySelector(".require").innerHTML = `<span class="actions">${route.actionCount || ""}</span> ` + route.require
