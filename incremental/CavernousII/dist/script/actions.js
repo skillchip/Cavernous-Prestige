@@ -321,9 +321,9 @@ function spreadDamage(damage, clone) {
     });
 }
 let combatTools = [ /* Prestige place to increase tool stats */
-    [getStuff("Iron Axe"), 0.01*(1+0.1*prestige[4].level), getStat("Woodcutting")],
-    [getStuff("Iron Pick"), 0.01*(1+0.1*prestige[4].level), getStat("Mining")],
-    [getStuff("Iron Hammer"), 0.01*(1+0.1*prestige[4].level), getStat("Smithing")]
+    [getStuff("Iron Axe"), 0.01*(1/*+0.1*prestige[4].level*/), getStat("Woodcutting")],
+    [getStuff("Iron Pick"), 0.01*(1/*+0.1*prestige[4].level*/), getStat("Mining")],
+    [getStuff("Iron Hammer"), 0.01*(1/*+0.1*prestige[4].level*/), getStat("Smithing")]
 ];
 function combatDuration() {
     let duration = 1;
