@@ -143,7 +143,7 @@ function completeMine(loc) {
 }
 function getDuplicationAmount(loc) {
     let x = loc.x, y = loc.y;
-    let amount = 1 + 0.1*prestige[3].level; /* Prestige, add multiplier for point spend */
+    let amount = Math.round((1 + 0.1*prestige[3].level) * 1000) / 1000; /* Prestige, add multiplier for point spend */
     const zone = zones[currentZone];
     x += zone.xOffset;
     y += zone.yOffset;
@@ -158,9 +158,9 @@ function getDuplicationAmount(loc) {
         [x - 1, y - 1]
     ];
     rune_locs.forEach(([X, Y]) => {
-        amount += +(zone.map[Y][X] == "d") * (getRune("Duplication").upgradeCount * 0.25 + 1 + 0.1*prestige[3].level);
+        amount += +(zone.map[Y][X] == "d") * Math.round(((getRune("Duplication").upgradeCount * 0.25 + 1 + 0.1*prestige[3].level) * 1000) /1000);
     });
-    return amount;
+    return amount; 
 }
 function completeGoldMine(loc) {
     const gold = getStuff("Gold Nugget");
