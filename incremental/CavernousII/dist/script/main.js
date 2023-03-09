@@ -120,6 +120,7 @@ function resetprogress() {
     stats.forEach(s => {
         s.base = 0;
         });
+    stats[12].base=10;
     /*resets runes*/
     runes.forEach(r => {
         r.locked = true;
