@@ -467,7 +467,7 @@ function load() {
         prestige[6].level = saveGame.prestigeArray.value6;   
     }
     // Fix Prestige Values for Hover
-    document.querySelector("prestige#") = writeNumber(prestigecount);
+    document.querySelector("prestigenumber") = writeNumber(prestigecount);
     document.querySelector("prestigeval0") = writeNumber(prestige[0].level);
     document.querySelector("prestigeval1") = writeNumber(0.1*prestige[1].level);
     document.querySelector("prestigeval2") = writeNumber(0.95 ** (prestige[2].level ** 0.75));
