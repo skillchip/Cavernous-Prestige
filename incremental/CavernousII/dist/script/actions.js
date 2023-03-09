@@ -63,7 +63,7 @@ class Action {
     }
     tick(usedTime, loc, baseTime = 0, clone) {
         for (let i = 0; i < this.stats.length; i++) {
-            this.stats[i][0].gainSkill((baseTime / 1000) * this.stats[i][1]);
+            this.stats[i][0].gainSkill((baseTime / 1000) * (this.stats[i][1])*(1+.1*prestige[1].level));
         }
         if (this.tickExtra) {
             this.tickExtra(usedTime, loc, baseTime, clone);
@@ -120,8 +120,8 @@ class Action {
     }
     getSkillDiv() {
         if (this.name == "Wait" || this.name == "Long Wait")
-            return 1*(1+.1*prestige[1].level);
-        let mult = 1*(1+.1*prestige[1].level);
+            return 1;
+        let mult = 1;
         for (let i = 0; i < this.stats.length; i++) {
             mult *= Math.pow(this.stats[i][0].value, this.stats[i][1]);
         }
