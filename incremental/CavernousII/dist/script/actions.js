@@ -158,7 +158,7 @@ function getDuplicationAmount(loc) {
         [x - 1, y - 1]
     ];
     rune_locs.forEach(([X, Y]) => {
-        amount += +(zone.map[Y][X] == "d") * Math.round(((getRune("Duplication").upgradeCount * 0.25 + 1 + 0.1*prestige[3].level) * 1000) /1000);
+        amount += +(zone.map[Y][X] == "d") * Math.round((((1+(getRune("Duplication").upgradeCount * 0.25)) * (1 + 0.1*prestige[3].level)) * 1000)) / 1000;
     });
     return amount; 
 }
