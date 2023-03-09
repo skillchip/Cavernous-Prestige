@@ -183,6 +183,7 @@ function SoftCap()
 */
 
     // Fix Prestige Values for Hover
+/*
     document.querySelector("prestigenumber") = writeNumber(prestigecount);
     document.querySelector("prestigeval0") = writeNumber(prestige[0].level);
     document.querySelector("prestigeval1") = writeNumber(0.1*prestige[1].level);
@@ -192,7 +193,7 @@ function SoftCap()
     document.querySelector("prestigeval5a") = writeNumber(1+prestige[5].level);
     document.querySelector("prestigeval5b") = writeNumber(20*prestige[5].level);
     document.querySelector("prestigeval6") = writeNumber(prestige[6].level);
-
+*/
 
 /** ****************************************** Prestiges ********************************************/
 let resetting = false;
