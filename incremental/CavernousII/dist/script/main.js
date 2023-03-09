@@ -84,7 +84,7 @@ var prestige = [
   ];
 
 function prestigeGame() { /* Dangerous, should fix */
-    if(GameComplete == 1)
+    if(GameComplete == 1||prestigecount == 0)
     {
         exportGame();
         GameComplete = 0;
@@ -527,7 +527,6 @@ let loopCompletions = 0;
 let gameStatus = { paused: false };
 const fps = 60;
 let shouldReset = false;
-if(prestigecount==0){GameComplete=1};
 setInterval(function mainLoop() {
     if (zones[0].index === -1 || realms[0].index === -1)
         return;
