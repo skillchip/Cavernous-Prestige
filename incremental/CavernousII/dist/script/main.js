@@ -125,6 +125,7 @@ function resetprogress() {
     runes.forEach(r => {
         r.locked = true;
         r.node = null;
+        /*r.upgradeCount = 0;*/
         });
     /*clear route*/
     routes = [];
