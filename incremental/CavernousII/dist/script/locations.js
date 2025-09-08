@@ -29,7 +29,7 @@ class MapLocation {
         if (currentRealm === 2) {
             const symbol = verdantMapping[this.baseType.symbol];
             if (symbol) {
-                return getLocationType(getLocationTypeBySymbol(symbol) || '') || this.baseType;
+                return getLocationType(getLocationTypeBySymbol(symbol) || "") || this.baseType;
             }
         }
         return this.baseType;
@@ -91,14 +91,14 @@ class MapLocation {
     }
     zoneTick(time) {
         if (this.temporaryPresent?.name == "Pump") {
-            const pumpAmount = Math.log2(getStat("Runic Lore").current) / 25 * time / 1000;
+            const pumpAmount = ((Math.log2(getStat("Runic Lore").current) / 25) * time) / 1000;
             this.water = Math.max(0, this.water - pumpAmount);
             // [tile, loc] is actually [mapChar, MapLocation] but ts doesn't provide a way to typehint that.  Or it's just bad at complex types.
             zones[currentZone].getAdjLocations(this.x, this.y).forEach(([tile, loc]) => {
                 if (!loc || !loc.water)
                     return;
                 const prevLevel = Math.min(Math.floor(loc.water * 10), MAX_WATER);
-                loc.water = Math.max(0, loc.water - (pumpAmount / 4));
+                loc.water = Math.max(0, loc.water - pumpAmount / 4);
                 if (prevLevel !== Math.min(Math.floor(loc.water * 10), MAX_WATER)) {
                     mapDirt.push([loc.x + zones[currentZone].xOffset, loc.y + zones[currentZone].yOffset]);
                 }
@@ -108,7 +108,7 @@ class MapLocation {
             return;
         if (this.baseType.name == "Springshroom" && !this.entered) {
             // Springshrooms add 0.2 water per second at 0 water, 0.05 at 1 water, and it drops off quadratically.
-            this.water = this.water + time / 1000 * 0.2 / ((1 + this.water) ** 2);
+            this.water = this.water + ((time / 1000) * 0.2) / (1 + this.water) ** 2;
         }
         // [tile, loc] is actually [mapChar, MapLocation] but ts doesn't provide a way to typehint that.  Or it's just bad at complex types.
         zones[currentZone].getAdjLocations(this.x, this.y).forEach(([tile, loc]) => {

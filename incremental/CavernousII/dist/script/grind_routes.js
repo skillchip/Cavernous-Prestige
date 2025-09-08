@@ -15,7 +15,7 @@ class GrindRoute {
         if (!getStat(x).learnable)
             this.projectedGain = -Infinity;
         this.realm = currentRealm;
-        this.route = zones.map(z => z.node ? z.queues.map(queue => queue.toString()) : "").filter(q => q);
+        this.route = zones.map(z => (z.node ? z.queues.map(queue => queue.toString()) : "")).filter(q => q);
     }
     loadRoute() {
         if (this.realm !== currentRealm)
@@ -29,14 +29,18 @@ class GrindRoute {
         redrawQueues();
     }
     isLoaded() {
-        return this.route.toString() === zones.map(z => z.node ? z.queues.map(queue => queue.toString()) : "").filter(q => q).toString();
+        return (this.route.toString() ===
+            zones
+                .map(z => (z.node ? z.queues.map(queue => queue.toString()) : ""))
+                .filter(q => q)
+                .toString());
     }
     static calculateProjectedGain(pStatName, pTotalStatGain) {
         const scalingStart = 99 + getRealmMult("Compounding Realm");
         const stat = getStat(pStatName);
         const val = (stat.base + pTotalStatGain + 1) ** (0.9 * (stat.base > scalingStart ? scalingStart / stat.base : 1) ** 0.05) - (stat.base + 1);
         const prevVal = (stat.base + 1) ** (0.9 * (stat.base > scalingStart ? scalingStart / stat.base : 1) ** 0.05) - (stat.base + 1);
-        return val < 0 ? 0 : (val - (prevVal < 0 ? 0 : prevVal)) / stat.statIncreaseDivisor * (0.99 + getRealmMult("Compounding Realm") / 100);
+        return val < 0 ? 0 : ((val - (prevVal < 0 ? 0 : prevVal)) / stat.statIncreaseDivisor) * (0.99 + getRealmMult("Compounding Realm") / 100);
     }
     static getBestRoute(stat) {
         return grindRoutes.find(r => r.statName === stat);
@@ -82,9 +86,7 @@ class GrindRoute {
     static loadBestRoute() {
         if (!grindRoutes.length)
             return;
-        let ordered = grindRoutes
-            .filter(r => r.projectedGain > settings.minStatGain && !r.failed)
-            .sort((a, b) => b.projectedGain - a.projectedGain);
+        let ordered = grindRoutes.filter(r => r.projectedGain > settings.minStatGain && !r.failed).sort((a, b) => b.projectedGain - a.projectedGain);
         if (ordered.some(r => !r.tried)) {
             ordered = ordered.filter(r => r.tried);
         }
@@ -94,10 +96,10 @@ class GrindRoute {
         }
     }
     static checkStatValue() {
-        grindRoutes.forEach(r => r.tried = false);
+        grindRoutes.forEach(r => (r.tried = false));
     }
     static stopCheckingStatValue() {
-        grindRoutes.forEach(r => r.tried = true);
+        grindRoutes.forEach(r => (r.tried = true));
     }
 }
 let grindRoutes = [];

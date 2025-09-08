@@ -106,10 +106,10 @@ const locationTypes = [
     new LocationType("Timelike Barrier", "2", "A wall made of a strange energy that saps your mana. {'3':'Its duration does not compound.'}", "Enter Barrier", null, null),
     new LocationType("Timelike Barrier", "3", "A wall made of a strange energy that saps your mana. {'3':'Its duration does not compound.'}", "Enter Barrier", null, null),
     new LocationType("Exit", "!", "A door.  Opening to the outside world", "Exit", null, null),
-    new LocationType("Not a location", "", "", null, null),
+    new LocationType("Not a location", "", "", null, null)
 ];
-if ((new URL(document.location.href).searchParams).get("save") === "separate") {
-    locationTypes.forEach((locationType) => {
+if (new URL(document.location.href).searchParams.get("save") === "separate") {
+    locationTypes.forEach(locationType => {
         if (locationType.name === "Portal")
             return;
         locationType.canWorkTogether = false;

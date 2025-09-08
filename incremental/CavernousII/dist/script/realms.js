@@ -29,7 +29,7 @@ class Realm {
         this.node?.parentNode?.removeChild(this.node);
         this.node = null;
         routes = routes.filter(r => r.realm !== this.index);
-        zones.forEach(z => z.routes = z.routes.filter(r => r.realm !== this.index));
+        zones.forEach(z => (z.routes = z.routes.filter(r => r.realm !== this.index)));
         grindRoutes = grindRoutes.filter(r => r.realm !== this.index);
     }
     display() {
@@ -110,7 +110,10 @@ function getRealmComplete(realm) {
             realm.complete();
             getMessage("Complete Verdant").display();
             wither.upgradeCount = 3;
-            wither.isInscribable = simpleRequire([["Salt", 1], ["Iron Ore", 1]]);
+            wither.isInscribable = simpleRequire([
+                ["Salt", 1],
+                ["Iron Ore", 1]
+            ]);
             wither.updateDescription();
         }
     }
@@ -121,11 +124,13 @@ const verdantMapping = {
     "«": "♣",
     "╖": "α",
     "╣": "§",
-    "■": "δ", // Chert -> Springshroom (you can't get here, but still...)
+    "■": "δ" // Chert -> Springshroom (you can't get here, but still...)
 };
 function convertMapToVerdant(map, zoneNumber) {
     const notReUnlocked = getRealm("Verdant Realm").maxMult === 2;
-    return map.map(row => [...row].map(cell => zoneNumber > 6 && notReUnlocked ? "█" : (zoneNumber == 6 && cell == "Θ" && notReUnlocked ? "♠" : verdantMapping[cell] || cell)).join(""));
+    return map.map(row => [...row]
+        .map(cell => (zoneNumber > 6 && notReUnlocked ? "█" : zoneNumber == 6 && cell == "Θ" && notReUnlocked ? "♠" : verdantMapping[cell] || cell))
+        .join(""));
 }
 const realms = [];
 realms.push(
@@ -142,7 +147,7 @@ new Realm("Long Realm", "A realm where everything takes thrice as long and costs
 realms.push(
 // All rock-type locations become mushroom-type locations.
 // Mushroom growth rate is doubled.
-new Realm("Verdant Realm", "A realm where mushrooms have overgrown everything, and they grow five times as fast.  You'll learn how to get mana from gold more efficiently (0.05% per mana rock completion).", () => (getRune("Wither").upgradeCount || 0) > 2 ? Infinity : (getRune("Wither").upgradeCount || 0) + 3, () => {
+new Realm("Verdant Realm", "A realm where mushrooms have overgrown everything, and they grow five times as fast.  You'll learn how to get mana from gold more efficiently (0.05% per mana rock completion).", () => ((getRune("Wither").upgradeCount || 0) > 2 ? Infinity : (getRune("Wither").upgradeCount || 0) + 3), () => {
     if (getRune("Wither").upgradeCount++ >= 1) {
         getMessage("Reupgraded Wither Rune").display();
     }

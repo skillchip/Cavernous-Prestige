@@ -1,5 +1,5 @@
 "use strict";
-let suppressMessages = (new URL(document.location.href).searchParams).get("messages") == "disabled";
+let suppressMessages = new URL(document.location.href).searchParams.get("messages") == "disabled";
 const messageBox = document.querySelector("#message-box") ??
     (() => {
         throw new Error("No config box found");
@@ -207,6 +207,6 @@ const messages = [
 			You've beaten the game!
 			There may be, in the future, further updates to this game.
 			It is highly likely, however, that those updates will be in the form of Cavernous III.
-			Thanks for playing!`),
+			Thanks for playing!`)
 ];
 //# sourceMappingURL=messages.js.map

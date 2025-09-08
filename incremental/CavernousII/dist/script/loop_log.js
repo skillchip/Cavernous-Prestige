@@ -13,7 +13,7 @@ class LoopLog {
         this.stats = stats.map(s => {
             return {
                 base: s.base,
-                current: s.base,
+                current: s.base
             };
         });
     }
@@ -64,7 +64,7 @@ class LoopLog {
         this.current = false;
         currentLoopLog = new LoopLog();
         previousLoopLogs.push(this);
-        previousLoopLogs.forEach(log => log.node = null);
+        previousLoopLogs.forEach(log => (log.node = null));
         const ephemeralLogCount = previousLoopLogs.filter(l => !l.kept).length;
         if (ephemeralLogCount > MAX_EPHEMERAL_LOGS) {
             let filtered = false;
@@ -96,9 +96,7 @@ class LoopLog {
         }
         const totalActionNode = logEntryTemplate.cloneNode(true);
         totalActionNode.querySelector(".name").innerHTML = "Total clone-seconds";
-        totalActionNode.querySelector(".value").innerHTML = writeNumber(actions.filter(a => !["Frost", "Barrier Drain"].includes(a[0]))
-            .reduce((a, c) => a + c[1]
-            .reduce((acc, cur) => acc + cur, 0), 0) / 1000, 1);
+        totalActionNode.querySelector(".value").innerHTML = writeNumber(actions.filter(a => !["Frost", "Barrier Drain"].includes(a[0])).reduce((a, c) => a + c[1].reduce((acc, cur) => acc + cur, 0), 0) / 1000, 1);
         totalActionNode.style.fontWeight = "bold";
         loopActionNode.append(totalActionNode);
         for (let i = 0; i < actions.length; i++) {
@@ -110,7 +108,9 @@ class LoopLog {
             node.querySelector(".name").innerHTML = actions[i][0];
             node.querySelector(".value").innerHTML = writeNumber(actionValue, 1);
             loopActionNode.append(node);
-            node.querySelector(".description").innerHTML = `Relevant stats:<br>${getAction(actions[i][0])?.stats.map(s => `${s[0].name}: ${s[1]}`).join("<br>") || ""}`;
+            node.querySelector(".description").innerHTML = `Relevant stats:<br>${getAction(actions[i][0])
+                ?.stats.map(s => `${s[0].name}: ${s[1]}`)
+                .join("<br>") || ""}`;
             node.style.color = setRGBContrast(window.getComputedStyle(node).backgroundColor);
         }
         // Decide whether a scrollbar is needed
@@ -172,7 +172,7 @@ class LoopLog {
             zoneNode.innerHTML = i < 0 ? "All" : this.zoneNames[i];
             if (i === zone)
                 zoneNode.classList.add("active");
-            const changeLogZone = ((z) => (e) => {
+            const changeLogZone = (z => (e) => {
                 e.stopPropagation();
                 this.display(z);
             })(i);
@@ -205,13 +205,15 @@ function displayLogs() {
         loopPrevNode.removeChild(loopPrevNode.lastChild);
     }
     if (currentLoopLog.node) {
-        currentLoopLog.node.querySelector(".value").innerHTML = writeNumber(Object.values(currentLoopLog.actions).reduce((a, c) => a + c.reduce((acc, cur) => acc + cur, 0), 0) / 1000, 1) + " cs";
+        currentLoopLog.node.querySelector(".value").innerHTML =
+            writeNumber(Object.values(currentLoopLog.actions).reduce((a, c) => a + c.reduce((acc, cur) => acc + cur, 0), 0) / 1000, 1) + " cs";
     }
     else {
         currentLoopLog.node = previousLogTemplate.cloneNode(true);
         currentLoopLog.node.querySelector(".pin").classList.add("disabled");
         currentLoopLog.node.querySelector(".name").innerHTML = "Current";
-        currentLoopLog.node.querySelector(".value").innerHTML = writeNumber(Object.values(currentLoopLog.actions).reduce((a, c) => a + c.reduce((acc, cur) => acc + cur, 0), 0) / 1000, 1) + " cs";
+        currentLoopLog.node.querySelector(".value").innerHTML =
+            writeNumber(Object.values(currentLoopLog.actions).reduce((a, c) => a + c.reduce((acc, cur) => acc + cur, 0), 0) / 1000, 1) + " cs";
         currentLoopLog.node.onclick = e => {
             previousLoopLogs.forEach(log => log.node?.classList.remove("selected"));
             currentLoopLog.display();
@@ -229,9 +231,10 @@ function displayLogs() {
                 log.node.classList.add("mana-mined");
             if (log.kept)
                 log.node.querySelector(".pin").classList.add("pinned");
-            log.node.querySelector(".pin").onmousedown = () => log.kept = !log.kept;
+            log.node.querySelector(".pin").onmousedown = () => (log.kept = !log.kept);
             log.node.querySelector(".name").innerHTML = "Previous";
-            log.node.querySelector(".value").innerHTML = writeNumber(Object.values(log.actions).reduce((a, c) => a + c.reduce((acc, cur) => acc + cur, 0), 0) / 1000, 1) + " cs";
+            log.node.querySelector(".value").innerHTML =
+                writeNumber(Object.values(log.actions).reduce((a, c) => a + c.reduce((acc, cur) => acc + cur, 0), 0) / 1000, 1) + " cs";
             log.node.onclick = e => {
                 previousLoopLogs.forEach(prevLog => prevLog.node?.classList.remove("selected"));
                 currentLoopLog.node?.classList.remove("selected");

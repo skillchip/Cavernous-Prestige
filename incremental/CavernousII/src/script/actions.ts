@@ -241,21 +241,30 @@ function longZoneCompletionMult(x: number, y: number, z: number) {
 }
 
 function canMineMana(location: MapLocation) {
-	if (location.completions) return CanStartReturnCode.Never;
 	return CanStartReturnCode.Now;
 }
 
 function mineManaRockCost(location: MapLocation, clone: Clone | null = null, realm: number | null = null, completionOveride?: number) {
 	/* Prestige, add mana rock reducer for point spend */
-	return location.completions && !completionOveride
-		? 0
-		: Math.pow(
-				1 +
-					(0.1 + 0.05 * (location.zone.index + (realm == null ? currentRealm : realm))) *
-						longZoneCompletionMult(location.x, location.y, location.zone.index) *
-						0.95 ** (prestige[2].level ** 0.75),
-				completionOveride ?? location.priorCompletions
-		  );
+	// If completed previously in this route, subtract previous time.
+	const duration = Math.pow(
+		1 +
+			(0.1 + 0.05 * (location.zone.index + (realm == null ? currentRealm : realm))) *
+				longZoneCompletionMult(location.x, location.y, location.zone.index) *
+				0.95 ** (prestige[2].level ** 0.75),
+		completionOveride ?? location.priorCompletions
+	);
+	if (location.completions) {
+		return duration - 
+			Math.pow(
+					1 +
+						(0.1 + 0.05 * (location.zone.index + (realm == null ? currentRealm : realm))) *
+							longZoneCompletionMult(location.x, location.y, location.zone.index) *
+							0.95 ** (prestige[2].level ** 0.75),
+				(completionOveride ?? location.priorCompletions) - 1
+			);
+	}
+	return duration;
 }
 
 function mineGemCost(location: MapLocation) {

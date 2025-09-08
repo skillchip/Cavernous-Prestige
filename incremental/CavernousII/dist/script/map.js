@@ -39,30 +39,30 @@ const classMapping = {
     "{": ["shield2", "Anvil - Upgrade Shield"],
     "}": ["armour2", "Anvil - Upgrade Armour"],
     "^": ["fountain", "Fountain"],
-    "W": ["rune-weak", "Weaken Rune"],
-    "H": ["rune-wither", "Wither Rune"],
-    "T": ["rune-to", "Teleport To Rune"],
-    "t": ["rune-to-charged", "Teleport To Rune"],
-    "F": ["rune-from", "Teleport From Rune"],
-    "D": ["rune-dup", "Duplication Rune"],
-    "d": ["rune-dup-charged", "Duplication Rune"],
-    "P": ["rune-pump", "Pump Rune"],
+    W: ["rune-weak", "Weaken Rune"],
+    H: ["rune-wither", "Wither Rune"],
+    T: ["rune-to", "Teleport To Rune"],
+    t: ["rune-to-charged", "Teleport To Rune"],
+    F: ["rune-from", "Teleport From Rune"],
+    D: ["rune-dup", "Duplication Rune"],
+    d: ["rune-dup-charged", "Duplication Rune"],
+    P: ["rune-pump", "Pump Rune"],
     "○": ["coal", "Coal"],
     "☼": ["gem", "Gem"],
     "©": ["mined-gem", "Gem Tunnel"],
-    "g": ["goblin", "Goblin"],
-    "c": ["chieftain", "Goblin Chieftain"],
-    "s": ["skeleton", "Skeleton"],
-    "m": ["champion", "Goblin Champion"],
-    "G": ["golem", "Golem"],
-    "X": ["guardian", "Guardian"],
-    "Θ": ["zone", "Zone Portal"],
+    g: ["goblin", "Goblin"],
+    c: ["chieftain", "Goblin Chieftain"],
+    s: ["skeleton", "Skeleton"],
+    m: ["champion", "Goblin Champion"],
+    G: ["golem", "Golem"],
+    X: ["guardian", "Guardian"],
+    Θ: ["zone", "Zone Portal"],
     "√": ["goal", "Goal"],
     "♠": ["mushroom", "Mushroom"],
     "♣": ["kudzushroom", "Kudzushroom"],
-    "α": ["sporeshroom", "Sporeshroom"],
+    α: ["sporeshroom", "Sporeshroom"],
     "§": ["oystershroom", "Oystershroom"],
-    "δ": ["springshroom", "Springshroom"],
+    δ: ["springshroom", "Springshroom"],
     "¢": ["axe", "Anvil - Axe"],
     "¥": ["pick", "Anvil - Pick"],
     "£": ["hammer", "Anvil - Hammer"],
@@ -73,7 +73,7 @@ const classMapping = {
     "1": ["barrier", "Timelike Barrier"],
     "2": ["barrier", "Timelike Barrier"],
     "3": ["barrier", "Timelike Barrier"],
-    "!": ["exit", "Exit"],
+    "!": ["exit", "Exit"]
 };
 const MAX_WATER = 11;
 setTimeout(() => {
@@ -227,20 +227,20 @@ function setMined(x, y, icon) {
         "☼": "©",
         "#": ".",
         "♠": ".",
-        "α": ".",
+        α: ".",
         "«": ".",
         "+": ".",
         "%": ".",
         " ": ".",
-        "g": ".",
-        "G": ".",
-        "X": ".",
+        g: ".",
+        G: ".",
+        X: ".",
         "○": ".",
-        "c": ".",
+        c: ".",
         "§": ".",
-        "δ": ".",
-        "s": ".",
-        "m": ".",
+        δ: ".",
+        s: ".",
+        m: ".",
         "√": ".",
         "░": ".",
         "╖": ".",
@@ -248,14 +248,12 @@ function setMined(x, y, icon) {
         "■": ".",
         "1": ".",
         "2": ".",
-        "3": ".",
+        "3": "."
     };
     x += zones[currentZone].xOffset;
     y += zones[currentZone].yOffset;
     let old = zones[currentZone].map[y][x];
-    let tile = icon ||
-        minedMapping[old] ||
-        old;
+    let tile = icon || minedMapping[old] || old;
     zones[currentZone].map[y] = zones[currentZone].map[y].slice(0, x) + tile + zones[currentZone].map[y].slice(x + 1);
     if (tile !== old) {
         mapDirt.push([x, y]);

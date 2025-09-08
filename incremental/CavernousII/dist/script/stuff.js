@@ -38,7 +38,7 @@ class Stuff {
             const stat = getStat({
                 "Iron Axe": "Woodcutting",
                 "Iron Pick": "Mining",
-                "Iron Hammer": "Smithing",
+                "Iron Hammer": "Smithing"
                 // @ts-ignore
             }[this.name]);
             const combatValue = Math.pow(stat.value, 0.01 * this.count * (1 + 0.1 * prestige[4].level));
@@ -51,7 +51,7 @@ class Stuff {
             return;
         let stuffTemplate = document.querySelector("#stuff-template");
         if (stuffTemplate === null) {
-            throw new Error('No stuff template');
+            throw new Error("No stuff template");
         }
         this.node = stuffTemplate.cloneNode(true);
         this.node.id = "stuff_" + this.name.replace(" ", "_");
@@ -95,11 +95,12 @@ function calcCombatStats() {
     clones.forEach(c => c.styleDamage());
 }
 function getStatBonus(name, mult) {
+    /* Prestige, place to add stat increases */
     let stat = getStat(name);
     return (oldAmount, amount) => stat.getBonus((Math.floor(amount + 0.01) - Math.floor(oldAmount + 0.01)) * mult * (1 + 0.1 * prestige[4].level));
 }
 const stuff = [
-    new Stuff("Gold Nugget", "•", "This is probably pretty valuable.  Shiny!", "#ffd700", 0),
+    /* Prestige, place to add stat increases */ new Stuff("Gold Nugget", "•", "This is probably pretty valuable.  Shiny!", "#ffd700", 0),
     new Stuff("Salt", "⌂", "A pile of salt.  You're not hungry, so what's this good for?", "#ffffff", 0),
     new Stuff("Iron Ore", "•", "A chunk of iron ore.  Not useful in its current form.", "#777777", 0),
     new Stuff("Gem", "☼", "A gem, pulled from the ground.  Gives +2.5 (or +2.5%) to Magic.", "#90ee90", 0, getStatBonus("Magic", 2.5)),
@@ -119,7 +120,7 @@ const stuff = [
     new Stuff("Iron Hammer", hammerSVG, "An iron hammer.  Gives +15 or +15% to Smithing (whichever is greater), and applies 1% of your Smithing skill to combat ({}%).", "#777777", 0, getStatBonus("Smithing", 15)),
     new Stuff("+1 Sword", ")", "A magical sword.  Sharp! (+4 attack)  Max 1 weapon per clone.", "#688868", 0, calcCombatStats),
     new Stuff("+1 Shield", "[", "A magical shield.  This should help you not die. (+4 defense)  Max 1 shield per clone.", "#688868", 0, calcCombatStats),
-    new Stuff("+1 Armour", "]", "A suit of magical armour.  This should help you take more hits. (+25 health)  Max 1 armour per clone.", "#688868", 0, calcCombatStats),
+    new Stuff("+1 Armour", "]", "A suit of magical armour.  This should help you take more hits. (+25 health)  Max 1 armour per clone.", "#688868", 0, calcCombatStats)
 ];
 function setContrast(colour) {
     const darkness = (parseInt(colour.slice(1, 3), 16) * 299 + parseInt(colour.slice(3, 5), 16) * 587 + parseInt(colour.slice(5, 7), 16) * 114) / 1000;
@@ -138,12 +139,13 @@ function getStuff(name) {
 function displayStuff(node, route) {
     function displaySingleThing(thing) {
         let stuff = getStuff(thing.name);
-        return `<span style="color: ${stuff.colour}">${(Math.round(thing.count * 1000) / 1000)}${stuff.icon}</span>`;
+        return `<span style="color: ${stuff.colour}">${Math.round(thing.count * 1000) / 1000}${stuff.icon}</span>`;
     }
     if (route.require?.length) {
-        node.querySelector(".require").innerHTML = `<span class="actions">${route.actionCount || ""}</span> ` + route.require
-            .map(displaySingleThing)
-            .join("") + (route instanceof ZoneRoute ? rightArrowSVG : "");
+        node.querySelector(".require").innerHTML =
+            `<span class="actions">${route.actionCount || ""}</span> ` +
+                route.require.map(displaySingleThing).join("") +
+                (route instanceof ZoneRoute ? rightArrowSVG : "");
     }
     else {
         let stuffNode = node.querySelector(".require");
@@ -155,7 +157,6 @@ function displayStuff(node, route) {
         if (route.cloneHealth.some(c => c[1] < 0)) {
             node.querySelector(".stuff").innerHTML += `<span style="color: #ff0000">${route.cloneHealth.filter(c => c[1] < 0).length}♥</span>`;
         }
-        ;
     }
     else {
         let stuffNode = node.querySelector(".stuff");
@@ -164,10 +165,11 @@ function displayStuff(node, route) {
     }
 }
 function getEquipHealth(stuff) {
+    /* Prestige, place to add stat increases */
     const equipmentHealth = {
         "Iron Armour": 5 * (1 + 0.1 * prestige[4].level),
         "Steel Armour": 15 * (1 + 0.1 * prestige[4].level),
-        "+1 Armour": 25 * (1 + 0.1 * prestige[4].level),
+        "+1 Armour": 25 * (1 + 0.1 * prestige[4].level)
     };
     return stuff.reduce((a, s) => a + (equipmentHealth[s.name] || 0) * s.count, 0);
 }

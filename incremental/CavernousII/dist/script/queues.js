@@ -46,7 +46,8 @@ class QueueAction {
                     let percent = 1 - this.currentAction.remainingDuration / this.currentAction.startingDuration;
                     percent *= 100;
                     this.node.style.backgroundSize = `${Math.max(0, percent)}%`;
-                    if (percent < this.lastProgress + 100 / (0.5 * 60)) { // 0.5 second @ 60fps
+                    if (percent < this.lastProgress + 100 / (0.5 * 60)) {
+                        // 0.5 second @ 60fps
                         this.queue.displayActionProgress(percent);
                     }
                     else {
@@ -99,9 +100,12 @@ class QueueAction {
             }
             else {
                 const fakeLocation = new MapLocation(0, 0, new Zone("Not a zone", ["."]), "Not a location");
-                this.currentAction = this.action == "." ? new ActionInstance(getAction("Wait"), fakeLocation, false)
-                    : this.action == "," ? new ActionInstance(getAction("Long Wait"), fakeLocation, false)
-                        : null;
+                this.currentAction =
+                    this.action == "."
+                        ? new ActionInstance(getAction("Wait"), fakeLocation, false)
+                        : this.action == ","
+                            ? new ActionInstance(getAction("Long Wait"), fakeLocation, false)
+                            : null;
                 if (!this.currentAction) {
                     // Perform action immediately
                     if (this.action[0] == "N") {
@@ -180,11 +184,11 @@ class QueueAction {
         if (this.currentAction.remainingDuration == 0) {
             const targetX = this.currentClone.x + +(this.action == "R") - +(this.action == "L");
             const targetY = this.currentClone.y + +(this.action == "D") - +(this.action == "U");
-            if ("LURD".includes(this.action)
-                && (targetX != this.currentClone.x || targetY != this.currentClone.y)
-                && !this.currentAction.moved
-                && ".*©".includes(getOffsetCurrentMapTile(targetX, targetY))
-                && !["Walk", "Kudzu Chop"].includes(this.currentAction.action.name)) {
+            if ("LURD".includes(this.action) &&
+                (targetX != this.currentClone.x || targetY != this.currentClone.y) &&
+                !this.currentAction.moved &&
+                ".*©".includes(getOffsetCurrentMapTile(targetX, targetY)) &&
+                !["Walk", "Kudzu Chop"].includes(this.currentAction.action.name)) {
                 loopCompletions--;
                 const location = getMapLocation(targetX, targetY);
                 const actions = [];
@@ -201,7 +205,7 @@ class QueueAction {
                     }
                 });
                 if (actions.length > 1) {
-                    actions.forEach(a => a.remainingDuration = a.remainingDuration * (actions.length - 1) / actions.length);
+                    actions.forEach(a => (a.remainingDuration = (a.remainingDuration * (actions.length - 1)) / actions.length));
                 }
                 else {
                     // Force complete of solo walk;
@@ -298,7 +302,7 @@ class QueuePathfindAction extends QueueAction {
         if (walkable.includes(zones[currentZone].map[originY][originX + 1]))
             openList.push([originY, originX + 1, 1, getDistance(originX + 1, this.targetX, originY, this.targetY), "R"]);
         while (openList.length > 0) {
-            let best_next = openList.reduce((a, c) => a < c[3] ? a : c[3], Infinity);
+            let best_next = openList.reduce((a, c) => (a < c[3] ? a : c[3]), Infinity);
             let active = openList.splice(openList.findIndex(x => x[3] == best_next), 1)[0];
             if (getDistance(active[1], this.targetX, active[0], this.targetY) == 0) {
                 this.cacheAction = active[4];
@@ -306,13 +310,37 @@ class QueuePathfindAction extends QueueAction {
             }
             // Add adjacent tiles
             if (walkable.includes(zones[currentZone].map[active[0] - 1][active[1]]) && !closedList.find(x => x[0] == active[0] - 1 && x[1] == active[1]))
-                openList.push([active[0] - 1, active[1], active[2] + 1, active[2] + getDistance(active[1], this.targetX, active[0] - 1, this.targetY), active[4]]);
+                openList.push([
+                    active[0] - 1,
+                    active[1],
+                    active[2] + 1,
+                    active[2] + getDistance(active[1], this.targetX, active[0] - 1, this.targetY),
+                    active[4]
+                ]);
             if (walkable.includes(zones[currentZone].map[active[0] + 1][active[1]]) && !closedList.find(x => x[0] == active[0] + 1 && x[1] == active[1]))
-                openList.push([active[0] + 1, active[1], active[2] + 1, active[2] + getDistance(active[1], this.targetX, active[0] + 1, this.targetY), active[4]]);
+                openList.push([
+                    active[0] + 1,
+                    active[1],
+                    active[2] + 1,
+                    active[2] + getDistance(active[1], this.targetX, active[0] + 1, this.targetY),
+                    active[4]
+                ]);
             if (walkable.includes(zones[currentZone].map[active[0]][active[1] - 1]) && !closedList.find(x => x[0] == active[0] && x[1] == active[1] - 1))
-                openList.push([active[0], active[1] - 1, active[2] + 1, active[2] + getDistance(active[1] - 1, this.targetX, active[0], this.targetY), active[4]]);
+                openList.push([
+                    active[0],
+                    active[1] - 1,
+                    active[2] + 1,
+                    active[2] + getDistance(active[1] - 1, this.targetX, active[0], this.targetY),
+                    active[4]
+                ]);
             if (walkable.includes(zones[currentZone].map[active[0]][active[1] + 1]) && !closedList.find(x => x[0] == active[0] && x[1] == active[1] + 1))
-                openList.push([active[0], active[1] + 1, active[2] + 1, active[2] + getDistance(active[1] + 1, this.targetX, active[0], this.targetY), active[4]]);
+                openList.push([
+                    active[0],
+                    active[1] + 1,
+                    active[2] + 1,
+                    active[2] + getDistance(active[1] + 1, this.targetX, active[0], this.targetY),
+                    active[4]
+                ]);
             // Remove the most recent from consideration
             closedList.push([active[0], active[1]]);
         }
@@ -344,9 +372,11 @@ class ActionQueue extends Array {
         this.progressNode = null;
         this.isScrolling = false;
         this.index = index;
-        items.forEach(a => a.queue = this);
+        items.forEach(a => (a.queue = this));
     }
-    get cursor() { return this.cursorPos; }
+    get cursor() {
+        return this.cursorPos;
+    }
     set cursor(newVal) {
         if (newVal !== null) {
             if (newVal < -1)
@@ -366,10 +396,12 @@ class ActionQueue extends Array {
         }
         else {
             this.cursorNode.classList.add("visible");
-            this.cursorNode.style.left = (this.cursorPos * 16 + 17) + "px";
+            this.cursorNode.style.left = this.cursorPos * 16 + 17 + "px";
         }
     }
-    get selected() { return clones[this.index].isSelected; }
+    get selected() {
+        return clones[this.index].isSelected;
+    }
     set selected(newVal) {
         if (this.selected == newVal)
             return;
@@ -412,11 +444,12 @@ class ActionQueue extends Array {
         if (!actionID.match(/^([UDLRI<=+\.,:]|N\d+;|T|P-?\d+:-?\d+;)$/)) {
             return;
         }
-        let done = this.cursor == null ? false // last action, don't skip
-            : this.cursor >= 0 ? this[this.cursor + 1].done // middle action, skip if next is started
+        let done = this.cursor == null
+            ? false // last action, don't skip
+            : this.cursor >= 0
+                ? this[this.cursor + 1].done // middle action, skip if next is started
                 : this[0].started; // first action, skip if next is started
-        let newAction = actionID[0] == "P" ? new QueuePathfindAction(actionID, this, Boolean(done))
-            : new QueueAction(actionID, this, Boolean(done));
+        let newAction = actionID[0] == "P" ? new QueuePathfindAction(actionID, this, Boolean(done)) : new QueueAction(actionID, this, Boolean(done));
         if (this.cursor == null) {
             this.push(newAction);
             this.queueNode?.append(newAction.node);
@@ -483,7 +516,7 @@ class ActionQueue extends Array {
         setTimeout(() => {
             if (!actionBarWidth)
                 return setActionBarWidth(this.node);
-            this.node.parentElement.scrollLeft = Math.max((this.cursor !== null ? this.cursor : this.length) * 16 - (actionBarWidth / 2), 0);
+            this.node.parentElement.scrollLeft = Math.max((this.cursor !== null ? this.cursor : this.length) * 16 - actionBarWidth / 2, 0);
             // Potentially take active action into account
             this.isScrolling = false;
         });
@@ -551,7 +584,7 @@ function selectClone(target, event) {
         zones[displayZone].queues[index].selected = !zones[displayZone].queues[index].selected;
     }
     else {
-        zones[displayZone].queues.forEach((q, i) => q.selected = i == index);
+        zones[displayZone].queues.forEach((q, i) => (q.selected = i == index));
     }
     clones[zones[currentZone].queues.findIndex(q => q.selected)].writeStats();
 }
@@ -573,7 +606,7 @@ function addRuneAction(index) {
 function clearQueues() {
     if (settings.warnings && !confirm("Really clear selected queues?"))
         return;
-    zones[displayZone].queues.forEach(q => q.selected ? q.clear() : null);
+    zones[displayZone].queues.forEach(q => (q.selected ? q.clear() : null));
 }
 function createActionNode(action) {
     const actionTemplate = document.querySelector("#action-template");
@@ -582,24 +615,22 @@ function createActionNode(action) {
     let actionNode = actionTemplate.cloneNode(true);
     actionNode.removeAttribute("id");
     let character = {
-        "L": leftArrowSVG,
-        "R": rightArrowSVG,
-        "U": upArrowSVG,
-        "D": downArrowSVG,
-        "I": interactSVG,
-        "T": repeatInteractSVG,
+        L: leftArrowSVG,
+        R: rightArrowSVG,
+        U: upArrowSVG,
+        D: downArrowSVG,
+        I: interactSVG,
+        T: repeatInteractSVG,
         "<": repeatListSVG,
         "=": syncSVG,
         "+": noSyncSVG,
         ".": "...",
         ",": ",,,",
-        ":": pauseSVG,
+        ":": pauseSVG
     }[action];
     if (!character) {
         let value = getActionValue(action);
-        character = action[0] == "N" ? runes[value].icon
-            : action[0] == "P" ? pathfindSVG
-                : "";
+        character = action[0] == "N" ? runes[value].icon : action[0] == "P" ? pathfindSVG : "";
     }
     actionNode.querySelector(".character").innerHTML = character || "";
     return actionNode;
@@ -647,7 +678,7 @@ function countMultipleActions() {
     });
 }
 function clearWorkProgressBars() {
-    [...(queuesNode?.querySelectorAll(".work-progress") || [])].forEach(bar => bar.style.width = "0%");
+    [...(queuesNode?.querySelectorAll(".work-progress") || [])].forEach(bar => (bar.style.width = "0%"));
 }
 function redrawQueues() {
     zones[displayZone].queues.forEach(q => {
@@ -682,7 +713,7 @@ function setCursor(event, el) {
 }
 function clearCursors(event, el) {
     if (!event || event.target == el) {
-        zones[currentZone].queues.forEach(q => q.cursor = null);
+        zones[currentZone].queues.forEach(q => (q.cursor = null));
     }
 }
 function queueToString(queue) {
@@ -693,7 +724,7 @@ function exportQueues() {
     navigator.clipboard.writeText(JSON.stringify(exportString));
 }
 function getLongExport(all = true) {
-    return JSON.stringify(zones.map(z => z.node && (all || currentZone >= z.index) ? z.queues.map(queue => queueToString(queue)) : "").filter(q => q));
+    return JSON.stringify(zones.map(z => (z.node && (all || currentZone >= z.index) ? z.queues.map(queue => queueToString(queue)) : "")).filter(q => q));
 }
 function longExportQueues() {
     navigator.clipboard.writeText(getLongExport());
@@ -727,10 +758,10 @@ function longImportQueues(queueString) {
         if (!queueString)
             return;
     }
-    let tempQueues = JSON.stringify(zones.map(z => z.node ? z.queues.map(queue => queueToString(queue)) : "").filter(q => q));
+    let tempQueues = JSON.stringify(zones.map(z => (z.node ? z.queues.map(queue => queueToString(queue)) : "")).filter(q => q));
     try {
         let newQueues;
-        if (typeof (queueString) == "string") {
+        if (typeof queueString == "string") {
             newQueues = JSON.parse(queueString);
         }
         else {

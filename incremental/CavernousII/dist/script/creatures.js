@@ -8,12 +8,12 @@ class BaseCreature {
     }
 }
 let baseCreatures = [
-    new BaseCreature('Goblin', 5, 0, 12),
-    new BaseCreature('Goblin Chieftain', 7, 3, 20),
-    new BaseCreature('Skeleton', 5, 5, 50),
-    new BaseCreature('Goblin Champion', 15, 8, 50),
-    new BaseCreature('Golem', 15, 15, 50),
-    new BaseCreature('Guardian', 25, 20, 100),
+    new BaseCreature("Goblin", 5, 0, 12),
+    new BaseCreature("Goblin Chieftain", 7, 3, 20),
+    new BaseCreature("Skeleton", 5, 5, 50),
+    new BaseCreature("Goblin Champion", 15, 8, 50),
+    new BaseCreature("Golem", 15, 15, 50),
+    new BaseCreature("Guardian", 25, 20, 100)
 ];
 class Creature {
     constructor(creature, x, y) {
@@ -30,7 +30,7 @@ class Creature {
     }
 }
 function getCreature(search) {
-    if (typeof search == 'string') {
+    if (typeof search == "string") {
         return baseCreatures.find(a => a.name == search);
     }
     else {

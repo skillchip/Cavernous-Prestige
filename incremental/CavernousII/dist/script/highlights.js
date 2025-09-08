@@ -5,7 +5,7 @@ let hoverLocation = null;
 const HIGHLIGHT_TYPES = {
     FINAL: 0,
     HOVER: 1,
-    CURSOR: 2,
+    CURSOR: 2
 };
 function showLocationAfterSteps(index, queueNumber, isDraw = false, highlightType = HIGHLIGHT_TYPES.FINAL) {
     if (index == -1)

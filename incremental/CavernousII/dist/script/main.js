@@ -75,9 +75,10 @@ var prestige = [
     new Prestige("BonusResc", 0),
     new Prestige("BetterEquip", 0),
     new Prestige("SoftCap", 0),
-    new Prestige("BonusZones", 0),
+    new Prestige("BonusZones", 0)
 ];
 function prestigeGame() {
+    /* Dangerous, should fix */
     if (GameComplete == 1 || prestigecount == 0) {
         exportGame();
         GameComplete = 0;
@@ -107,7 +108,6 @@ function resetprogress() {
         if (z.node != null) {
             z.node.parentNode.removeChild(z.node);
         }
-        ;
         z.node = null;
         z.goalComplete = false;
     });
@@ -268,7 +268,7 @@ let save = async function save() {
     const playerStats = stats.map(s => {
         return {
             name: s.name,
-            base: s.base,
+            base: s.base
         };
     });
     const zoneData = zones.map(zone => {
@@ -286,15 +286,15 @@ let save = async function save() {
             locations: zoneLocations,
             queues: zone.queues ? zone.queues.map(queue => queue.map(q => q.actionID)) : [[]],
             routes: zone.routes,
-            goal: zone.goalComplete,
+            goal: zone.goalComplete
         };
     });
     const cloneData = {
-        count: clones.length,
+        count: clones.length
     };
     const time = {
         saveTime: Date.now(),
-        timeBanked,
+        timeBanked
     };
     const messageData = messages.map(m => [m.name, m.displayed]);
     const savedRoutes = JSON.parse(JSON.stringify(routes, (key, value) => {
@@ -316,7 +316,7 @@ let save = async function save() {
     const realmData = realms.map(r => {
         return {
             maxMult: r.maxMult,
-            completed: r.completed,
+            completed: r.completed
         };
     });
     /* prestige data */
@@ -352,7 +352,7 @@ let save = async function save() {
         machines: machines,
         realmData: realmData,
         prestigeData: prestigeData,
-        prestigeArray: prestigeArray,
+        prestigeArray: prestigeArray
     };
     let saveString = JSON.stringify(saveGame);
     // Typescript can't find LZString, and I don't care.
@@ -577,7 +577,8 @@ setInterval(function mainLoop() {
     }
     if (!settings.running ||
         mana.current == 0 ||
-        (settings.autoRestart == AutoRestart.WaitAny && zones[currentZone].queues.some(q => !q.getNextAction() && (!q.length || q[q.length - 1].actionID != "="))) ||
+        (settings.autoRestart == AutoRestart.WaitAny &&
+            zones[currentZone].queues.some(q => !q.getNextAction() && (!q.length || q[q.length - 1].actionID != "="))) ||
         (settings.autoRestart == AutoRestart.WaitAll && zones[currentZone].queues.every(q => !q.getNextAction()) && clones.some(c => c.damage < Infinity)) ||
         !messageBox.hidden) {
         timeBanked += time;
@@ -594,7 +595,7 @@ setInterval(function mainLoop() {
     if (timeAvailable < 0)
         timeAvailable = 0;
     let timeLeft = runActions(timeAvailable);
-    timeBanked += (time + timeLeft - timeAvailable);
+    timeBanked += time + timeLeft - timeAvailable;
     if (timeBanked < 0)
         timeBanked = 0;
     if (zones[currentZone].queues.some(q => q.selected)) {
@@ -623,7 +624,7 @@ function runActions(time) {
     let loops = 0;
     while (time > 0.001) {
         let actions = zones[currentZone].queues.map(q => q.getNextAction());
-        const nullActions = actions.map((a, i) => a === null ? i : -1).filter(a => a > -1);
+        const nullActions = actions.map((a, i) => (a === null ? i : -1)).filter(a => a > -1);
         actions = actions.filter(a => a !== null);
         if (actions.length == 0) {
             if (settings.autoRestart == AutoRestart.RestartAlways || settings.autoRestart == AutoRestart.RestartDone) {
@@ -648,8 +649,8 @@ function runActions(time) {
         }
         const waitActions = actions.filter(a => a.done != ActionStatus.Started);
         actions = actions.filter(a => a.done == ActionStatus.Started);
-        if (zones[currentZone].queues.every((q, i) => clones[i].isSyncing || clones[i].damage == Infinity || clones[i].notSyncing || !q.hasFutureSync())
-            && waitActions.some(a => a.action == "=")) {
+        if (zones[currentZone].queues.every((q, i) => clones[i].isSyncing || clones[i].damage == Infinity || clones[i].notSyncing || !q.hasFutureSync()) &&
+            waitActions.some(a => a.action == "=")) {
             waitActions.filter(a => a.action == "=").forEach(a => a.complete());
             clones.forEach(c => c.unSync());
             continue;
