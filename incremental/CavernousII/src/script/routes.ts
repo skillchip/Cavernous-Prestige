@@ -50,15 +50,18 @@ class Route {
 			// Route requirements
 			// cloneHealth is [min (from start), delta]
 			this.cloneHealth = clones.map(c => c.minHealth);
-			this.require = zones[currentZone].startStuff.map(s => {
-				return {
-					"name": s.name,
-                    "count": Math.round((s.count - getStuff(s.name).min)*1000)/1000, /*forcing rounding*/
-				}
-			}).filter(s => s.count > 0);
+			this.require = zones[currentZone].startStuff
+				.map(s => {
+					return {
+						name: s.name,
+						count: Math.round((s.count - getStuff(s.name).min) * 1000) / 1000 /*forcing rounding*/
+					};
+				})
+				.filter(s => s.count > 0);
 
-			this.cloneArriveTimes = clones.filter(c => c.x == this.x && c.y == this.y && zones[this.zone].queues[c.id].getNextAction()?.action === "I")
-			    .map(c => queueTime);
+			this.cloneArriveTimes = clones
+				.filter(c => c.x == this.x && c.y == this.y && zones[this.zone].queues[c.id].getNextAction()?.action === "I")
+				.map(c => queueTime);
 			if (saveName === "saveGameII_separate") {
 				this.cloneArriveTimes = [Math.min(...this.cloneArriveTimes)];
 			}
@@ -68,30 +71,28 @@ class Route {
 			this.allDead = false;
 			this.invalidateCost = false;
 			this.estimateRefineManaLeft();
-			const usedRoutes = zones.slice(0, this.zone).map(z => z.lastRoute ? z.routes.find(r => r.isSame(z.lastRoute!)) : null);
+			const usedRoutes = zones.slice(0, this.zone).map(z => (z.lastRoute ? z.routes.find(r => r.isSame(z.lastRoute!)) : null));
 			if (usedRoutes.every(r => r)) this.usedRoutes = usedRoutes as ZoneRoute[];
 
 			return;
 		}
 		Object.assign(this, base);
-		if (this.usedRoutes && this.usedRoutes.length && typeof(this.usedRoutes[0]) == "number"){
+		if (this.usedRoutes && this.usedRoutes.length && typeof this.usedRoutes[0] == "number") {
 			// Populate the usedRoutes
-			const usedRoutes = (this.usedRoutes as any as number[]).flatMap(id =>
-				zones.map(z => z.routes.find(r => r.id == id)).filter(r => r)
-			);
+			const usedRoutes = (this.usedRoutes as any as number[]).flatMap(id => zones.map(z => z.routes.find(r => r.id == id)).filter(r => r));
 			if (usedRoutes.every(r => r)) this.usedRoutes = usedRoutes as ZoneRoute[];
 		}
 	}
 
-	set cachedEstimate(value: number){
+	set cachedEstimate(value: number) {
 		this._cachedEstimate = value - getBaseMana(this.zone, this.realm);
 	}
 
-	get cachedEstimate(){
+	get cachedEstimate() {
 		return this._cachedEstimate + getBaseMana(this.zone, this.realm);
 	}
 
-	isSame(route: Route | undefined){
+	isSame(route: Route | undefined) {
 		if (!route) return false;
 		return (
 			JSON.stringify(route.route) == JSON.stringify(this.route) &&
@@ -99,17 +100,17 @@ class Route {
 		);
 	}
 
-	pickRoute(zone:number, actualRequirements: simpleStuffList, health = clones.map(c => 0), actionCount = this.actionCount): ZoneRoute[] | null {
+	pickRoute(zone: number, actualRequirements: simpleStuffList, health = clones.map(c => 0), actionCount = this.actionCount): ZoneRoute[] | null {
 		let routeOptions = zones[zone].sumRoute(actualRequirements, health, actionCount);
-		if (zone == 0){
+		if (zone == 0) {
 			if (routeOptions.length == 0) return null;
 			let health = getStat("Health");
 			let route = routeOptions.find(r => r[1].every(s => s.count == 0) && r[2].every(h => Math.abs(h) < health.base + getEquipHealth(r[1]))) || [];
 			return route[0] ? [route[0]] : null;
 		}
-		for (let i = 0; i < routeOptions.length; i++){
+		for (let i = 0; i < routeOptions.length; i++) {
 			let routes = this.pickRoute(zone - 1, routeOptions[i][1], routeOptions[i][2], routeOptions[i][0].actionCount);
-			if (routes !== null){
+			if (routes !== null) {
 				routeOptions[i][0].noValidPrior = false;
 				return [...routes, routeOptions[i][0]];
 			}
@@ -118,23 +119,23 @@ class Route {
 		return null;
 	}
 
-	loadRoute(turnOffAuto = false, forceLastZoneLoad = false){
-		if (turnOffAuto){
+	loadRoute(turnOffAuto = false, forceLastZoneLoad = false) {
+		if (turnOffAuto) {
 			if (settings.grindStats) toggleGrindStats();
 			if (settings.grindMana) toggleGrindMana();
 		}
 		let success = true;
-		if (this.zone > 0){
+		if (this.zone > 0) {
 			let routes;
-			if (this.usedRoutes && this.usedRoutes.every((r, i) => zones[i].routes.some(zr => zr.id == r.id))){
+			if (this.usedRoutes && this.usedRoutes.every((r, i) => zones[i].routes.some(zr => zr.id == r.id))) {
 				routes = this.usedRoutes;
 			} else {
 				routes = this.pickRoute(this.zone - 1, this.require, this.cloneHealth);
 				markRoutesChanged();
 				this.usedRoutes = routes;
 			}
-			if (routes !== null){
-				for (let i = 0; i < routes.length; i++){
+			if (routes !== null) {
+				for (let i = 0; i < routes.length; i++) {
 					routes[i].loadRoute(zones[i], false);
 				}
 				this.loadingFailed = false;
@@ -143,8 +144,8 @@ class Route {
 				this.loadingFailed = true;
 			}
 		}
-		if (success || forceLastZoneLoad){
-			for (let i = 0; i < zones[this.zone].queues.length; i++){
+		if (success || forceLastZoneLoad) {
+			for (let i = 0; i < zones[this.zone].queues.length; i++) {
 				if (i == 0 || this.route.length == 1) {
 					zones[this.zone].queues[i].fromString(this.route[0]);
 				} else if (this.route.length == 2) {
@@ -162,7 +163,7 @@ class Route {
 		this.manaDrain = zones[currentZone].manaDrain;
 		let route = zones[currentZone].queues.map(r => queueToString(r));
 		route = route.filter(e => e.length);
-		if (this.log!.goldVaporizedCount > this.goldVaporized[0]){
+		if (this.log!.goldVaporizedCount > this.goldVaporized[0]) {
 			this.needsNewEstimate = true;
 			this.goldVaporized = [this.log!.goldVaporizedCount, this.log!.goldVaporizedMana];
 		}
@@ -179,15 +180,17 @@ class Route {
 		this.route = route;
 		// cloneHealth is [min (from start), delta]
 		this.cloneHealth = clones.map(c => c.minHealth);
-		this.require = zones[currentZone].startStuff.map(s => {
-			return {
-				"name": s.name,
-                "count": Math.round((s.count - getStuff(s.name).min)*1000)/1000, /*forcing rounding*/
-			}
-		}).filter(s => s.count > 0);
+		this.require = zones[currentZone].startStuff
+			.map(s => {
+				return {
+					name: s.name,
+					count: Math.round((s.count - getStuff(s.name).min) * 1000) / 1000 /*forcing rounding*/
+				};
+			})
+			.filter(s => s.count > 0);
 
 		const arrivedClones = clones.filter(c => c.x == this.x && c.y == this.y && zones[this.zone].queues[c.id].getNextAction()?.action === "I").length;
-		while (arrivedClones > this.cloneArriveTimes.length && saveName !== "saveGameII_separate"){
+		while (arrivedClones > this.cloneArriveTimes.length && saveName !== "saveGameII_separate") {
 			this.needsNewEstimate = true;
 			this.cloneArriveTimes.push(queueTime);
 		}
@@ -207,25 +210,25 @@ class Route {
 	getTotalRockTime(current = false) {
 		const manaMult = getRealmMult("Verdant Realm") || 1;
 		const manaTotal = getBaseMana(this.zone, this.realm) + (current ? this.goldVaporized[0] * GOLD_VALUE * manaMult : this.goldVaporized[1]);
-		const drainMult = (1 + this.manaDrain * this.chronoMult);
-		let totalRockTime = this.cloneArriveTimes.reduce((a, c) => a + (manaTotal - (c / 1000)), 0) / drainMult;
+		const drainMult = 1 + this.manaDrain * this.chronoMult;
+		let totalRockTime = this.cloneArriveTimes.reduce((a, c) => a + (manaTotal - c / 1000), 0) / drainMult;
 		// Remove drain loss before any clone arrived
-		totalRockTime -= (this.drainLoss * this.cloneArriveTimes.length);
+		totalRockTime -= this.drainLoss * this.cloneArriveTimes.length;
 
 		// Remove drain loss from time prior to other clones arriving
 		const firstCloneArrival = Math.min(...this.cloneArriveTimes);
 		const preArrivalTime = this.cloneArriveTimes.reduce((a, c) => a + (c - firstCloneArrival), 0);
-		totalRockTime -= preArrivalTime / this.cloneArriveTimes.length * (this.manaDrain * this.chronoMult);
+		totalRockTime -= (preArrivalTime / this.cloneArriveTimes.length) * (this.manaDrain * this.chronoMult);
 		return totalRockTime;
 	}
 
-	estimateMagicAfterVaporizing(gold:number) {
+	estimateMagicAfterVaporizing(gold: number) {
 		// Underestimate rather than overestimate, to avoid the UI giving a "mana left: 0.01" estimate
 		// for a rock that fails to complete.
 		const baseMagic = getStat("Magic").base;
-		const baseDuration = (realms[this.realm].name == "Long Realm" ? 3 : 1);
-		const highEstimate = baseMagic + gold * baseDuration * 10 / (100 + baseMagic);
-		return baseMagic + gold * baseDuration * 10 / (100 + highEstimate);
+		const baseDuration = realms[this.realm].name == "Long Realm" ? 3 : 1;
+		const highEstimate = baseMagic + (gold * baseDuration * 10) / (100 + baseMagic);
+		return baseMagic + (gold * baseDuration * 10) / (100 + highEstimate);
 	}
 
 	estimateRefineManaLeft(current = false, ignoreInvalidate = false, completed = false) {
@@ -242,7 +245,7 @@ class Route {
 		estimate /= this.cloneArriveTimes.length;
 
 		// Multiply excess by drain multiplier because the difference is not symmetric
-		const drainMult = (1 + this.manaDrain * this.chronoMult);
+		const drainMult = 1 + this.manaDrain * this.chronoMult;
 		if (estimate > 0) estimate *= drainMult;
 
 		this.cachedEstimate = estimate;
@@ -255,15 +258,16 @@ class Route {
 		let currentLeft = this.estimateRefineManaLeft(false, true);
 		let currentCost = this.getRefineCost(times);
 		const manaTotal = getBaseMana(this.zone, this.realm) + this.goldVaporized[1];
-		const totalRockTime = this.cloneArriveTimes.reduce((a, c) => a + (manaTotal - (c / 1000)), 0) / (1 + this.manaDrain / this.chronoMult);
+		const totalRockTime = this.cloneArriveTimes.reduce((a, c) => a + (manaTotal - c / 1000), 0) / (1 + this.manaDrain / this.chronoMult);
 		const magic = this.estimateMagicAfterVaporizing(this.goldVaporized[0]);
 		const finalMagic = magic + totalRockTime / 10;
-		const magicMod = 1 + ((magic + finalMagic) / 200);
+		const magicMod = 1 + (magic + finalMagic) / 200;
 		while (
-			currentLeft + 0.1 * times * (this.zone + 1)
-			>
-			(this.getRefineCost(times) - currentCost) * (1 + this.manaDrain / this.chronoMult) / this.cloneArriveTimes.length / magicMod)
-			{times++}
+			currentLeft + 0.1 * times * (this.zone + 1) >
+			((this.getRefineCost(times) - currentCost) * (1 + this.manaDrain / this.chronoMult)) / this.cloneArriveTimes.length / magicMod
+		) {
+			times++;
+		}
 		return times;
 	}
 
@@ -271,11 +275,11 @@ class Route {
 		if (location.baseType.name !== "Mana-infused Rock") return;
 		const prev = Route.getBestRoute(location.x, location.y, currentZone);
 		let cur = currentRoutes.find(r => r.x == location.x && r.y == location.y && r.zone == currentZone);
-		if (cur === undefined){
+		if (cur === undefined) {
 			cur = new Route(location);
 			if (cur.cloneArriveTimes.length == 0) return;
 			currentRoutes.push(cur);
-			if (prev){
+			if (prev) {
 				prev.needsNewEstimate = true;
 				prev.estimateRefineManaLeft();
 			}
@@ -283,7 +287,7 @@ class Route {
 			cur.updateRoute();
 		}
 		if (prev && cur && !completed && !prev.invalidateCost && !cur.needsNewEstimate) return;
-		if (completed){
+		if (completed) {
 			cur.hasAttempted = false;
 			if (prev) prev.hasAttempted = false;
 		}
@@ -310,47 +314,49 @@ class Route {
 	static migrate(ar: any) {
 		if (!ar) return ar;
 		ar.forEach((route: any) => {
-			if (route.requirements){
+			if (route.requirements) {
 				route.require = route.requirements;
 				route.requirements = undefined;
 			}
-			if (!route.cloneArriveTimes){
+			if (!route.cloneArriveTimes) {
 				route.cloneArriveTimes = [0];
 			}
 			// Some routes saved to things which aren't mana rocks.
-			if (zones[route.zone].getMapLocation(route.x, route.y, true)?.baseType.name !== "Mana-infused Rock"){
+			if (zones[route.zone].getMapLocation(route.x, route.y, true)?.baseType.name !== "Mana-infused Rock") {
 				route.discard = true;
 			}
 		});
 		return ar.filter((route: any) => !route.discard);
 	}
 
-	static fromJSON(ar:PropertiesOf<Route>[]) {
+	static fromJSON(ar: PropertiesOf<Route>[]) {
 		ar = this.migrate(ar);
 		return ar.filter((r, i) => ar.findIndex(R => R.x == r.x && R.y == r.y && R.zone == r.zone && R.realm == r.realm) == i).map(r => new Route(r));
 	}
 
 	static loadBestRoute() {
-		let effs = routes.map(r => {
-			if (r.realm != currentRealm || r.allDead || r.noGrind) return null;
-			return [r.estimateRefineManaLeft() + (+r.loadingFailed * -1e8), r] as [number, Route];
-		}).filter((r):r is NonNullable<typeof r> => r !== null)
+		let effs = routes
+			.map(r => {
+				if (r.realm != currentRealm || r.allDead || r.noGrind) return null;
+				return [r.estimateRefineManaLeft() + +r.loadingFailed * -1e8, r] as [number, Route];
+			})
+			.filter((r): r is NonNullable<typeof r> => r !== null)
 			.sort((a, b) => {
 				if (a[1].hasAttempted && !b[1].hasAttempted) return 1;
 				if (!a[1].hasAttempted && b[1].hasAttempted) return -1;
 				return b[0] - a[0];
 			});
-		for (let i = 0; i < effs.length; i++){
+		for (let i = 0; i < effs.length; i++) {
 			if (effs[i][1].loadRoute()) return;
 		}
 	}
 
 	static invalidateRouteCosts() {
-		routes.filter(r => r.realm == currentRealm).forEach(r => r.invalidateCost = true);
+		routes.filter(r => r.realm == currentRealm).forEach(r => (r.invalidateCost = true));
 	}
 
 	static resetHasAttempted() {
-		routes.filter(r => r.realm == currentRealm).forEach(r => r.hasAttempted = false);
+		routes.filter(r => r.realm == currentRealm).forEach(r => (r.hasAttempted = false));
 	}
 
 	showOnLocationUI() {
@@ -384,7 +390,7 @@ class Route {
 		document.querySelector<HTMLElement>("#delete-route-button")!.onclick = this.deleteRoute.bind(this);
 		const noGrindButton = document.querySelector<HTMLElement>("#nogrind-button")!;
 		noGrindButton.onclick = this.setNoGrind.bind(this, noGrindButton);
-		if (this.noGrind){
+		if (this.noGrind) {
 			noGrindButton.classList.add("dontgrind");
 			noGrindButton.innerHTML = "Not grinding";
 		} else {
@@ -393,14 +399,14 @@ class Route {
 		}
 	}
 
-	deleteRoute(){
+	deleteRoute() {
 		routes = routes.filter(r => r != this);
 		showFinalLocation();
 	}
 
-	setNoGrind(noGrindButton: HTMLElement){
+	setNoGrind(noGrindButton: HTMLElement) {
 		this.noGrind = !this.noGrind;
-		if (this.noGrind){
+		if (this.noGrind) {
 			noGrindButton.classList.add("dontgrind");
 			noGrindButton.innerHTML = "Not grinding";
 		} else {
@@ -410,11 +416,11 @@ class Route {
 	}
 }
 
-function getBestRoute(x: number, y: number, z: number){
+function getBestRoute(x: number, y: number, z: number) {
 	return routes.find(r => r.x == x && r.y == y && r.zone == z && r.realm == currentRealm);
 }
 
-function loadRoute(){
+function loadRoute() {
 	let x = +document.querySelector<HTMLInputElement>("#x-loc")!.value;
 	let y = +document.querySelector<HTMLInputElement>("#y-loc")!.value;
 	let bestRoute = getBestRoute(x, y, displayZone);
@@ -422,40 +428,48 @@ function loadRoute(){
 	(<HTMLInputElement>document.activeElement)?.blur();
 }
 
-function updateGrindStats(){
+function updateGrindStats() {
 	let rockCounts = realms
-	  .filter(r => (!r.locked && !r.completed) || r.name == "Core Realm")
-	  .map(r => zones
-	    .filter(z => z.mapLocations.flat().length)
-	    .map((z, zone_i) => routes
-	      .filter(t => t.zone == zone_i && t.realm == r.index)
-	      .reduce((a, t) => a + (t.allDead ? 0.000005 : t.loadingFailed ? 0.005 : t.estimateRefineTimes()), 0)));
+		.filter(r => (!r.locked && !r.completed) || r.name == "Core Realm")
+		.map(r =>
+			zones
+				.filter(z => z.mapLocations.flat().length)
+				.map((z, zone_i) =>
+					routes
+						.filter(t => t.zone == zone_i && t.realm == r.index)
+						.reduce((a, t) => a + (t.allDead ? 0.000005 : t.loadingFailed ? 0.005 : t.estimateRefineTimes()), 0)
+				)
+		);
 	let reachedCounts = realms
-	  .filter(r => (!r.locked && !r.completed) || r.name == "Core Realm")
-	  .map(r => zones
-	    .filter(z => z.mapLocations.flat().length)
-	    .map((z, zone_i) =>
-	      z.mapLocations.flat().filter(l => l.type.name == "Mana-infused Rock").length !=
-	      routes.filter(t => t.zone == zone_i && t.realm == r.index).length));
+		.filter(r => (!r.locked && !r.completed) || r.name == "Core Realm")
+		.map(r =>
+			zones
+				.filter(z => z.mapLocations.flat().length)
+				.map(
+					(z, zone_i) =>
+						z.mapLocations.flat().filter(l => l.type.name == "Mana-infused Rock").length !=
+						routes.filter(t => t.zone == zone_i && t.realm == r.index).length
+				)
+		);
 	let revisitCounts = realms
-	  .filter(r => (!r.locked && !r.completed) || r.name == "Core Realm")
-	  .map(r => zones
-	    .filter(z => z.mapLocations.flat().length)
-	    .map((z, zone_i) =>
-	      routes.filter(t => t.zone == zone_i && t.realm == r.index && t.invalidateCost && !t.allDead).length));
+		.filter(r => (!r.locked && !r.completed) || r.name == "Core Realm")
+		.map(r =>
+			zones
+				.filter(z => z.mapLocations.flat().length)
+				.map((z, zone_i) => routes.filter(t => t.zone == zone_i && t.realm == r.index && t.invalidateCost && !t.allDead).length)
+		);
 	let skippedCounts = realms
-	  .filter(r => (!r.locked && !r.completed) || r.name == "Core Realm")
-	  .map(r => zones
-	    .filter(z => z.mapLocations.flat().length)
-	    .map((z, zone_i) =>
-	      routes.filter(t => t.zone == zone_i && t.realm == r.index && t.noGrind).length));
+		.filter(r => (!r.locked && !r.completed) || r.name == "Core Realm")
+		.map(r =>
+			zones.filter(z => z.mapLocations.flat().length).map((z, zone_i) => routes.filter(t => t.zone == zone_i && t.realm == r.index && t.noGrind).length)
+		);
 	const header = document.querySelector("#grind-stats-header")!;
 	const body = document.querySelector("#grind-stats")!;
 	const footer = document.querySelector("#grind-stats-footer")!;
 	let rowTemplate = document.querySelector("#grind-row-template")!;
 	let cellTemplate = document.querySelector("#grind-cell-template")!;
 	if (!rockCounts) return;
-	while (header.firstChild){
+	while (header.firstChild) {
 		header.removeChild(header.lastChild!);
 		footer.removeChild(footer.lastChild!);
 	}
@@ -466,12 +480,12 @@ function updateGrindStats(){
 	footerNode.removeAttribute("id");
 	footerNode.innerHTML = "Total";
 	footer.appendChild(footerNode);
-	while (body.firstChild){
+	while (body.firstChild) {
 		body.removeChild(body.lastChild!);
 	}
 	let completedRealms = 0;
-	for (let i = 0; i < rockCounts.length + completedRealms; i++){
-		if (realms[i].completed){
+	for (let i = 0; i < rockCounts.length + completedRealms; i++) {
+		if (realms[i].completed) {
 			completedRealms++;
 			continue;
 		}
@@ -484,30 +498,30 @@ function updateGrindStats(){
 		footerNode.innerHTML = rockCounts[i - completedRealms].reduce((a, c) => a + Math.floor(c)).toString();
 		footer.appendChild(footerNode);
 	}
-	for (let i = 0; i < rockCounts[0].length; i++){
+	for (let i = 0; i < rockCounts[0].length; i++) {
 		let rowNode = rowTemplate.cloneNode(true) as HTMLElement;
 		rowNode.removeAttribute("id");
 		let cellNode = cellTemplate.cloneNode(true) as HTMLElement;
 		cellNode.removeAttribute("id");
-		cellNode.innerHTML = `z${i+1}`;
+		cellNode.innerHTML = `z${i + 1}`;
 		rowNode.appendChild(cellNode);
-		for (let j = 0; j < rockCounts.length; j++){
+		for (let j = 0; j < rockCounts.length; j++) {
 			let cellNode = cellTemplate.cloneNode(true) as HTMLElement;
 			cellNode.removeAttribute("id");
 			cellNode.innerHTML = Math.floor(rockCounts[j][i]).toString();
-			if (rockCounts[j][i] % 1 > 0.001){
+			if (rockCounts[j][i] % 1 > 0.001) {
 				cellNode.classList.add("failed");
 			}
-			if (rockCounts[j][i] * 1000 % 1 > 0.001){
+			if ((rockCounts[j][i] * 1000) % 1 > 0.001) {
 				cellNode.classList.add("drowned");
 			}
-			if (reachedCounts[j][i]){
+			if (reachedCounts[j][i]) {
 				cellNode.classList.add("unreached");
 			}
-			if (revisitCounts[j][i]){
+			if (revisitCounts[j][i]) {
 				cellNode.classList.add("revisit");
 			}
-			if (skippedCounts[j][i]){
+			if (skippedCounts[j][i]) {
 				cellNode.classList.add("skipped");
 			}
 			rowNode.appendChild(cellNode);

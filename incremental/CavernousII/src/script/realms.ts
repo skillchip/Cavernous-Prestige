@@ -22,7 +22,7 @@ class Realm {
 		activateMachine: (() => void) | null = null,
 		extraDescription: (() => string) | null = null,
 		multPerRock: number = 0,
-		maxMult: number = Infinity,
+		maxMult: number = Infinity
 	) {
 		this.name = name;
 		this.description = description;
@@ -48,7 +48,7 @@ class Realm {
 		this.node?.parentNode?.removeChild(this.node);
 		this.node = null;
 		routes = routes.filter(r => r.realm !== this.index);
-		zones.forEach(z => z.routes = z.routes.filter(r => r.realm !== this.index));
+		zones.forEach(z => (z.routes = z.routes.filter(r => r.realm !== this.index)));
 		grindRoutes = grindRoutes.filter(r => r.realm !== this.index);
 	}
 
@@ -99,7 +99,7 @@ function changeRealms(newRealm: number) {
 	resetLoop();
 }
 
-function getRealmMult(name:string, force = false) {
+function getRealmMult(name: string, force = false) {
 	const realm = getRealm(name);
 	if (realm.mult === undefined || realm.mult === null || force) {
 		realm.mult =
@@ -125,33 +125,40 @@ function getCompoundingMultDesc() {
 }
 
 function getRealmComplete(realm: Realm) {
-	if (realm.name == "Verdant Realm"){
+	if (realm.name == "Verdant Realm") {
 		const wither = getRune("Wither");
-		if ((getRealmMult(realm.name, true) === realm.maxMult && wither.upgradeCount >= 3) || realm.completed){
+		if ((getRealmMult(realm.name, true) === realm.maxMult && wither.upgradeCount >= 3) || realm.completed) {
 			realm.complete();
 			getMessage("Complete Verdant").display();
 			wither.upgradeCount = 3;
-			wither.isInscribable = simpleRequire([["Salt", 1], ["Iron Ore", 1]]);
+			wither.isInscribable = simpleRequire([
+				["Salt", 1],
+				["Iron Ore", 1]
+			]);
 			wither.updateDescription();
 		}
 	}
 }
 
-const verdantMapping: {[key: string]: string} = {
+const verdantMapping: { [key: string]: string } = {
 	"#": "♠", // Limestone -> Mushroom
 	"√": "♠", // Limestone (Goal) -> Mushroom
 	"«": "♣", // Travertine -> Kudzushroom
 	"╖": "α", // Granite -> Sporeshroom
 	"╣": "§", // Basalt -> Oystershroom
-	"■": "δ", // Chert -> Springshroom (you can't get here, but still...)
+	"■": "δ" // Chert -> Springshroom (you can't get here, but still...)
 };
 
-function convertMapToVerdant(map:Zone["map"], zoneNumber: number): string[] {
+function convertMapToVerdant(map: Zone["map"], zoneNumber: number): string[] {
 	const notReUnlocked = getRealm("Verdant Realm").maxMult === 2;
-	return map.map(row => [...row].map(cell => zoneNumber > 6 && notReUnlocked ? "█" : (zoneNumber == 6 && cell == "Θ" && notReUnlocked ? "♠" : verdantMapping[cell] || cell)).join(""));
+	return map.map(row =>
+		[...row]
+			.map(cell => (zoneNumber > 6 && notReUnlocked ? "█" : zoneNumber == 6 && cell == "Θ" && notReUnlocked ? "♠" : verdantMapping[cell] || cell))
+			.join("")
+	);
 }
 
-const realms:Realm[] = [];
+const realms: Realm[] = [];
 realms.push(
 	// Default realm, no special effects. /* Prestige have clones.length remove prestige bonus clones from cost */
 	new Realm(
@@ -159,7 +166,8 @@ realms.push(
 		"Where you started.  Hopefully, how you'll leave this cave complex.",
 		() => clones.length - prestige[0].level,
 		() => Clone.addNewClone()
-	));
+	)
+);
 
 realms.push(
 	// Double mana cost on everything.
@@ -173,7 +181,8 @@ realms.push(
 			getRune("Duplication").updateDescription();
 			getMessage("Upgraded Duplication Rune").display(true);
 		}
-	));
+	)
+);
 
 realms.push(
 	// All rock-type locations become mushroom-type locations.
@@ -181,7 +190,7 @@ realms.push(
 	new Realm(
 		"Verdant Realm",
 		"A realm where mushrooms have overgrown everything, and they grow five times as fast.  You'll learn how to get mana from gold more efficiently (0.05% per mana rock completion).",
-		() => (getRune("Wither").upgradeCount || 0) > 2 ? Infinity : (getRune("Wither").upgradeCount || 0) + 3,
+		() => ((getRune("Wither").upgradeCount || 0) > 2 ? Infinity : (getRune("Wither").upgradeCount || 0) + 3),
 		() => {
 			if (getRune("Wither").upgradeCount++ >= 1) {
 				getMessage("Reupgraded Wither Rune").display();
@@ -191,8 +200,9 @@ realms.push(
 		},
 		getVerdantMultDesc,
 		0.0005,
-		2,
-	));
+		2
+	)
+);
 
 realms.push(
 	// Clones cannot help each other at all.
@@ -206,10 +216,11 @@ realms.push(
 		},
 		getCompoundingMultDesc,
 		0.1
-	));
+	)
+);
 
-function getRealm(name:string) {
-	let realm = realms.find(a => a.name == name)
+function getRealm(name: string) {
+	let realm = realms.find(a => a.name == name);
 	if (realm === undefined) throw new Error(`No realm with name "${name}" found`);
 	return realm;
 }

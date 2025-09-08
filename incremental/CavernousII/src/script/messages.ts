@@ -1,4 +1,4 @@
-let suppressMessages = (new URL(document.location.href).searchParams).get("messages") == "disabled";
+let suppressMessages = new URL(document.location.href).searchParams.get("messages") == "disabled";
 
 const messageBox: HTMLElement =
 	document.querySelector("#message-box") ??
@@ -328,5 +328,5 @@ const messages = [
 			There may be, in the future, further updates to this game.
 			It is highly likely, however, that those updates will be in the form of Cavernous III.
 			Thanks for playing!`
-	),
+	)
 ];

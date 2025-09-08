@@ -1,4 +1,4 @@
-function assertEqual(expected: any, actual: any){
+function assertEqual(expected: any, actual: any) {
 	if (expected === actual) return;
 	if (expected?.toString() === actual?.toString()) return;
 	let trace;
@@ -10,20 +10,20 @@ function assertEqual(expected: any, actual: any){
 	errors.push({
 		expected,
 		actual,
-		trace,
+		trace
 	});
 }
 
-async function waitForPause(){
+async function waitForPause() {
 	return new Promise(resolve => {
 		gameStatus = new Proxy(gameStatus, {
 			set: (target: any, prop: string, value: boolean) => {
-				if (prop == "paused" && value){
+				if (prop == "paused" && value) {
 					settings.running = false;
 					resolve(true);
 				}
 				return true;
-			},
+			}
 		});
 	});
 }

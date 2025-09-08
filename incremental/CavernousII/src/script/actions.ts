@@ -30,7 +30,7 @@ class ActionInstance {
 	start(clone: Clone): CanStartReturnCode {
 		if (this.isStarted) return CanStartReturnCode.Now;
 		const canStart = this.action.attemptStart(this.location, clone);
-		if (canStart == CanStartReturnCode.Now && this.remainingDuration == 0){
+		if (canStart == CanStartReturnCode.Now && this.remainingDuration == 0) {
 			this.startingDuration = this.remainingDuration = this.action.getDuration(this.location, clone);
 		}
 		if (canStart == CanStartReturnCode.Now) this.isStarted = true;
@@ -44,9 +44,9 @@ class ActionInstance {
 		let usedTime = Math.min(time / skillDiv, this.remainingDuration);
 		this.action.tick(usedTime, this.location, usedTime * skillDiv, clone);
 		this.remainingDuration -= usedTime;
-		if (this.remainingDuration == 0){
+		if (this.remainingDuration == 0) {
 			this.isStarted = false;
-			if (this.action.complete(this.location, clone, this)){
+			if (this.action.complete(this.location, clone, this)) {
 				this.start(clone);
 			} else if (this.isMove) {
 				loopCompletions++;
@@ -64,7 +64,7 @@ class Action<actionName extends anyActionName = anyActionName> {
 	baseDuration: number | (() => number);
 	stats: statList;
 	complete: (loc: MapLocation, clone: Clone, action: ActionInstance) => boolean | void;
-	attemptStart: ((location: MapLocation, clone: Clone) => CanStartReturnCode);
+	attemptStart: (location: MapLocation, clone: Clone) => CanStartReturnCode;
 	tickExtra: this["tick"] | null;
 	specialDuration: (location: MapLocation, clone?: Clone) => number;
 
@@ -88,7 +88,7 @@ class Action<actionName extends anyActionName = anyActionName> {
 
 	tick(usedTime: number, loc: MapLocation, baseTime: number = 0, clone: Clone) {
 		for (let i = 0; i < this.stats.length; i++) {
-            this.stats[i][0].gainSkill((baseTime / 1000) * (this.stats[i][1])*(1+.1*prestige[1].level));
+			this.stats[i][0].gainSkill((baseTime / 1000) * this.stats[i][1] * (1 + 0.1 * prestige[1].level));
 		}
 		if (this.tickExtra) {
 			this.tickExtra(usedTime, loc, baseTime, clone);
@@ -124,7 +124,7 @@ class Action<actionName extends anyActionName = anyActionName> {
 			duration -= applyWither;
 		}
 		duration *= this.getSkillDiv();
-		if (!useDuration){
+		if (!useDuration) {
 			if (realms[currentRealm].name == "Long Realm") {
 				duration *= 3;
 			} else if (realms[currentRealm].name == "Compounding Realm") {
@@ -170,9 +170,10 @@ function completeMine(loc: MapLocation) {
 }
 
 function getDuplicationAmount(loc: MapLocation) {
-	let x = loc.x, y = loc.y;
-    let amount = Math.round((1 + 0.1*prestige[3].level) * 1000) / 1000; /* Prestige, add multiplier for point spend */
-    const zone = zones[currentZone];
+	let x = loc.x,
+		y = loc.y;
+	let amount = Math.round((1 + 0.1 * prestige[3].level) * 1000) / 1000; /* Prestige, add multiplier for point spend */
+	const zone = zones[currentZone];
 	x += zone.xOffset;
 	y += zone.yOffset;
 	const rune_locs = [
@@ -186,8 +187,8 @@ function getDuplicationAmount(loc: MapLocation) {
 		[x - 1, y - 1]
 	];
 	rune_locs.forEach(([X, Y]) => {
-        amount += +(zone.map[Y][X] == "d") * Math.round((((1+(getRune("Duplication").upgradeCount * 0.25)) * (1 + 0.1*prestige[3].level)) * 1000)) / 1000;
-    });
+		amount += (+(zone.map[Y][X] == "d") * Math.round((1 + getRune("Duplication").upgradeCount * 0.25) * (1 + 0.1 * prestige[3].level) * 1000)) / 1000;
+	});
 	return amount;
 }
 
@@ -220,10 +221,7 @@ function completeCollectMana(loc: MapLocation) {
 	setMined(loc.x, loc.y, ".");
 	if (realms[currentRealm].name === "Long Realm") {
 		routes.forEach(r => {
-			if (r.zone !== loc.zone.index ||
-				r.x !== loc.x ||
-				r.y !== loc.y
-			) return;
+			if (r.zone !== loc.zone.index || r.x !== loc.x || r.y !== loc.y) return;
 			r.needsNewEstimate = true;
 		});
 	}
@@ -247,14 +245,21 @@ function canMineMana(location: MapLocation) {
 	return CanStartReturnCode.Now;
 }
 
-function mineManaRockCost(location: MapLocation, clone: Clone | null = null, realm:number | null = null, completionOveride?: number) { /* Prestige, add mana rock reducer for point spend */
-    return location.completions && !completionOveride
-        ? 0
-        : Math.pow(1 + (0.1 + 0.05 * (location.zone.index + (realm == null ? currentRealm : realm))) * longZoneCompletionMult(location.x, location.y, location.zone.index) * (0.95 ** (prestige[2].level ** 0.75)), completionOveride ?? location.priorCompletions);
-} 
+function mineManaRockCost(location: MapLocation, clone: Clone | null = null, realm: number | null = null, completionOveride?: number) {
+	/* Prestige, add mana rock reducer for point spend */
+	return location.completions && !completionOveride
+		? 0
+		: Math.pow(
+				1 +
+					(0.1 + 0.05 * (location.zone.index + (realm == null ? currentRealm : realm))) *
+						longZoneCompletionMult(location.x, location.y, location.zone.index) *
+						0.95 ** (prestige[2].level ** 0.75),
+				completionOveride ?? location.priorCompletions
+		  );
+}
 
-function mineGemCost(location: MapLocation){
-	return (location.completions + 1) ** 1.4
+function mineGemCost(location: MapLocation) {
+	return (location.completions + 1) ** 1.4;
 }
 
 function completeCollectGem(loc: MapLocation) {
@@ -361,17 +366,17 @@ function tickFight(usedTime: number, loc: MapLocation, baseTime: number, clone: 
 	spreadDamage(damage, clone);
 }
 
-function spreadDamage(damage: number, clone: Clone){
+function spreadDamage(damage: number, clone: Clone) {
 	const targetClones = clones.filter(c => c.x == clone.x && c.y == clone.y && c.damage < Infinity);
 	targetClones.forEach(c => {
 		c.takeDamage(damage / targetClones.length);
 	});
 }
 
-let combatTools: [Stuff<anyStuffName>, number, Stat<anyStatName>][] = [ /* Prestige place to increase tool stats */
-    [getStuff("Iron Axe"), 0.01*(1/*+0.1*prestige[4].level*/), getStat("Woodcutting")],
-    [getStuff("Iron Pick"), 0.01*(1/*+0.1*prestige[4].level*/), getStat("Mining")],
-    [getStuff("Iron Hammer"), 0.01*(1/*+0.1*prestige[4].level*/), getStat("Smithing")]
+let combatTools: [Stuff<anyStuffName>, number, Stat<anyStatName>][] = [
+	/* Prestige place to increase tool stats */ [getStuff("Iron Axe"), 0.01 * 1 /*+0.1*prestige[4].level*/, getStat("Woodcutting")],
+	[getStuff("Iron Pick"), 0.01 * 1 /*+0.1*prestige[4].level*/, getStat("Mining")],
+	[getStuff("Iron Hammer"), 0.01 * 1 /*+0.1*prestige[4].level*/, getStat("Smithing")]
 ];
 
 function combatDuration() {
@@ -401,7 +406,7 @@ function completeFight(loc: MapLocation) {
 }
 
 // Prevent backing out of combat
-function startHeal(loc: MapLocation, clone: Clone){
+function startHeal(loc: MapLocation, clone: Clone) {
 	return clone.inCombat ? CanStartReturnCode.Never : CanStartReturnCode.Now;
 }
 
@@ -452,10 +457,10 @@ function completeTeleport(loc: MapLocation, clone: Clone) {
 	}
 }
 
-function predictTeleport(){
-	for (let y = 0; y < zones[currentZone].map.length; y++){
-		for (let x = 0; x < zones[currentZone].map[y].length; x++){
-			if (zones[currentZone].map[y][x] == "t"){
+function predictTeleport() {
+	for (let y = 0; y < zones[currentZone].map.length; y++) {
+		for (let x = 0; x < zones[currentZone].map[y].length; x++) {
+			if (zones[currentZone].map[y][x] == "t") {
 				return 1;
 			}
 		}
@@ -562,7 +567,8 @@ function predictWither(location: MapLocation) {
 	return Math.max(...adjacentPlants.map(loc => loc.type.getEnterAction(loc.entered).getProjectedDuration(loc, loc.wither))) / 2000 + 0.1;
 }
 
-function activatePortal() { /* Prestige copy this for pockets? */
+function activatePortal() {
+	/* Prestige copy this for pockets? */
 	breakActions = true;
 	moveToZone(currentZone + 1);
 	if (settings.pauseOnPortal && settings.running) toggleRunning();
@@ -594,21 +600,22 @@ function startBarrier(location: MapLocation) {
 	return CanStartReturnCode.Never;
 }
 
-function barrierDuration(){
+function barrierDuration() {
 	if (realms[currentRealm].name == "Compounding Realm") {
 		return 1 / (1 + loopCompletions / 40);
 	}
 	return 1;
 }
 
-function completeGame() { /* Prestige add flag to allow gaining prestige, prestige points gain (once) and change message */
-    getMessage("You Win!").display();
-    // Reunlock VR
-    const vr = getRealm("Verdant Realm");
-    vr.maxMult = 1e308;
-    vr.completed = false;
-    vr.display();
-    GameComplete = 1;
+function completeGame() {
+	/* Prestige add flag to allow gaining prestige, prestige points gain (once) and change message */
+	getMessage("You Win!").display();
+	// Reunlock VR
+	const vr = getRealm("Verdant Realm");
+	vr.maxMult = 1e308;
+	vr.completed = false;
+	vr.display();
+	GameComplete = 1;
 }
 
 enum ACTION {
@@ -663,45 +670,219 @@ enum ACTION {
 	CREATE_PICK = "Create Pick",
 	CREATE_HAMMER = "Create Hammer",
 	ENTER_BARRIER = "Enter Barrier",
-	EXIT = "Exit",
+	EXIT = "Exit"
 }
 
-type anyActionName = `${ACTION}`
+type anyActionName = `${ACTION}`;
 type anyAction = Action<anyActionName>;
 const actions: anyAction[] = [
 	new Action("Walk", 100, [["Speed", 1]], completeMove),
 	new Action("Wait", 100, [["Speed", 1]], () => {}),
-	new Action("Long Wait", () => settings.longWait, [["Speed", 1]], () => {}),
-	new Action("Mine", 1000, [["Mining", 1], ["Speed", 0.2]], completeMine),
-	new Action("Mine Travertine", 10000, [["Mining", 1], ["Speed", 0.2]], completeMine),
-	new Action("Mine Granite", 350000, [["Mining", 1], ["Speed", 0.2]], completeMine),
-	new Action("Mine Basalt", 4000000, [["Mining", 1], ["Speed", 0.2]], completeMine),
-	new Action("Mine Chert", 50000000, [["Mining", 1], ["Speed", 0.2]], completeMine),
-	new Action("Mine Gold", 1000, [["Mining", 1], ["Speed", 0.2]], completeGoldMine),
+	new Action(
+		"Long Wait",
+		() => settings.longWait,
+		[["Speed", 1]],
+		() => {}
+	),
+	new Action(
+		"Mine",
+		1000,
+		[
+			["Mining", 1],
+			["Speed", 0.2]
+		],
+		completeMine
+	),
+	new Action(
+		"Mine Travertine",
+		10000,
+		[
+			["Mining", 1],
+			["Speed", 0.2]
+		],
+		completeMine
+	),
+	new Action(
+		"Mine Granite",
+		350000,
+		[
+			["Mining", 1],
+			["Speed", 0.2]
+		],
+		completeMine
+	),
+	new Action(
+		"Mine Basalt",
+		4000000,
+		[
+			["Mining", 1],
+			["Speed", 0.2]
+		],
+		completeMine
+	),
+	new Action(
+		"Mine Chert",
+		50000000,
+		[
+			["Mining", 1],
+			["Speed", 0.2]
+		],
+		completeMine
+	),
+	new Action(
+		"Mine Gold",
+		1000,
+		[
+			["Mining", 1],
+			["Speed", 0.2]
+		],
+		completeGoldMine
+	),
 	new Action("Mine Iron", 2500, [["Mining", 2]], completeIronMine),
 	new Action("Mine Coal", 5000, [["Mining", 2]], completeCoalMine),
 	new Action("Mine Salt", 50000, [["Mining", 1]], completeSaltMine),
-	new Action("Mine Gem", 100000, [["Mining", 0.75], ["Gemcraft", 0.25]], completeMine),
-	new Action("Collect Gem", 100000, [["Smithing", 0.1], ["Gemcraft", 1]], completeCollectGem, null, null, mineGemCost),
+	new Action(
+		"Mine Gem",
+		100000,
+		[
+			["Mining", 0.75],
+			["Gemcraft", 0.25]
+		],
+		completeMine
+	),
+	new Action(
+		"Collect Gem",
+		100000,
+		[
+			["Smithing", 0.1],
+			["Gemcraft", 1]
+		],
+		completeCollectGem,
+		null,
+		null,
+		mineGemCost
+	),
 	new Action("Collect Mana", 1000, [["Magic", 1]], completeCollectMana, canMineMana, tickCollectMana, mineManaRockCost),
 	new Action("Activate Machine", 1000, [], completeActivateMachine, startActivateMachine),
 	new Action("Make Iron Bars", 5000, [["Smithing", 1]], simpleCreate([["Iron Bar", 1]]), simpleRequire([["Iron Ore", 1]], true)),
-	new Action("Make Steel Bars", 15000, [["Smithing", 1]], simpleCreate([["Steel Bar", 1]]), simpleRequire([["Iron Bar", 1], ["Coal", 1]], true)),
+	new Action(
+		"Make Steel Bars",
+		15000,
+		[["Smithing", 1]],
+		simpleCreate([["Steel Bar", 1]]),
+		simpleRequire(
+			[
+				["Iron Bar", 1],
+				["Coal", 1]
+			],
+			true
+		)
+	),
 	new Action("Turn Gold to Mana", 1000, [["Magic", 1]], completeGoldMana, simpleRequire([["Gold Nugget", 1]], true)),
-	new Action("Cross Pit", 3000, [["Smithing", 1], ["Speed", 0.3]], completeCrossPit, haveBridge),
-	new Action("Cross Lava", 6000, [["Smithing", 1], ["Speed", 0.3]], completeCrossLava, haveBridge),
+	new Action(
+		"Cross Pit",
+		3000,
+		[
+			["Smithing", 1],
+			["Speed", 0.3]
+		],
+		completeCrossPit,
+		haveBridge
+	),
+	new Action(
+		"Cross Lava",
+		6000,
+		[
+			["Smithing", 1],
+			["Speed", 0.3]
+		],
+		completeCrossLava,
+		haveBridge
+	),
 	new Action("Create Bridge", 5000, [["Smithing", 1]], simpleCreate([["Iron Bridge", 1]]), simpleRequire([["Iron Bar", 2]])),
 	new Action("Create Long Bridge", 50000, [["Smithing", 1]], simpleCreate([["Iron Bridge", 1]]), simpleRequire([["Iron Bar", 2]])),
-	new Action("Upgrade Bridge", 12500, [["Smithing", 1]], simpleCreate([["Steel Bridge", 1]]), simpleRequire([["Steel Bar", 1], ["Iron Bridge", 1]])),
+	new Action(
+		"Upgrade Bridge",
+		12500,
+		[["Smithing", 1]],
+		simpleCreate([["Steel Bridge", 1]]),
+		simpleRequire([
+			["Steel Bar", 1],
+			["Iron Bridge", 1]
+		])
+	),
 	new Action("Create Sword", 7500, [["Smithing", 1]], simpleCreate([["Iron Sword", 1]]), canMakeEquip([["Iron Bar", 3]], "Sword")),
-	new Action("Upgrade Sword", 22500, [["Smithing", 1]], simpleCreate([["Steel Sword", 1]]), simpleRequire([["Steel Bar", 2], ["Iron Sword", 1]])),
-	new Action("Enchant Sword", 3000000, [["Smithing", 0.5], ["Gemcraft", 0.5]], simpleCreate([["+1 Sword", 1]]), simpleRequire([["Gem", 3], ["Steel Sword", 1]])),
+	new Action(
+		"Upgrade Sword",
+		22500,
+		[["Smithing", 1]],
+		simpleCreate([["Steel Sword", 1]]),
+		simpleRequire([
+			["Steel Bar", 2],
+			["Iron Sword", 1]
+		])
+	),
+	new Action(
+		"Enchant Sword",
+		3000000,
+		[
+			["Smithing", 0.5],
+			["Gemcraft", 0.5]
+		],
+		simpleCreate([["+1 Sword", 1]]),
+		simpleRequire([
+			["Gem", 3],
+			["Steel Sword", 1]
+		])
+	),
 	new Action("Create Shield", 12500, [["Smithing", 1]], simpleCreate([["Iron Shield", 1]]), canMakeEquip([["Iron Bar", 5]], "Shield")),
-	new Action("Upgrade Shield", 27500, [["Smithing", 1]], simpleCreate([["Steel Shield", 1]]), simpleRequire([["Steel Bar", 2], ["Iron Shield", 1]])),
-	new Action("Enchant Shield", 3000000, [["Smithing", 0.5], ["Gemcraft", 0.5]], simpleCreate([["+1 Shield", 1]]), simpleRequire([["Gem", 3], ["Steel Shield", 1]])),
+	new Action(
+		"Upgrade Shield",
+		27500,
+		[["Smithing", 1]],
+		simpleCreate([["Steel Shield", 1]]),
+		simpleRequire([
+			["Steel Bar", 2],
+			["Iron Shield", 1]
+		])
+	),
+	new Action(
+		"Enchant Shield",
+		3000000,
+		[
+			["Smithing", 0.5],
+			["Gemcraft", 0.5]
+		],
+		simpleCreate([["+1 Shield", 1]]),
+		simpleRequire([
+			["Gem", 3],
+			["Steel Shield", 1]
+		])
+	),
 	new Action("Create Armour", 10000, [["Smithing", 1]], simpleCreate([["Iron Armour", 1]]), canMakeEquip([["Iron Bar", 4]], "Armour")),
-	new Action("Upgrade Armour", 25000, [["Smithing", 1]], simpleCreate([["Steel Armour", 1]]), simpleRequire([["Steel Bar", 2], ["Iron Armour", 1]])),
-	new Action("Enchant Armour", 3000000, [["Smithing", 0.5], ["Gemcraft", 0.5]], simpleCreate([["+1 Armour", 1]]), simpleRequire([["Gem", 3], ["Steel Armour", 1]])),
+	new Action(
+		"Upgrade Armour",
+		25000,
+		[["Smithing", 1]],
+		simpleCreate([["Steel Armour", 1]]),
+		simpleRequire([
+			["Steel Bar", 2],
+			["Iron Armour", 1]
+		])
+	),
+	new Action(
+		"Enchant Armour",
+		3000000,
+		[
+			["Smithing", 0.5],
+			["Gemcraft", 0.5]
+		],
+		simpleCreate([["+1 Armour", 1]]),
+		simpleRequire([
+			["Gem", 3],
+			["Steel Armour", 1]
+		])
+	),
 	new Action("Attack Creature", 1000, [["Combat", 1]], completeFight, null, tickFight, combatDuration),
 	new Action("Teleport", 1, [["Runic Lore", 1]], completeTeleport, startTeleport, null, predictTeleport),
 	new Action("Charge Duplication", 50000, [["Runic Lore", 1]], completeChargeRune, startChargableRune, null, duplicateDuration),
@@ -709,17 +890,74 @@ const actions: anyAction[] = [
 	new Action("Charge Teleport", 50000, [["Runic Lore", 1]], completeChargeRune, startChargeTeleport),
 	new Action("Pump", 0, [], () => {}),
 	new Action("Heal", 1000, [["Runic Lore", 1]], completeHeal, startHeal, tickHeal, predictHeal),
-	new Action("Portal", 1, [["Magic", 0.5], ["Runic Lore", 0.5]], activatePortal),
+	new Action(
+		"Portal",
+		1,
+		[
+			["Magic", 0.5],
+			["Runic Lore", 0.5]
+		],
+		activatePortal
+	),
 	new Action("Complete Goal", 1000, [["Speed", 1]], completeGoal),
-	new Action("Chop", getChopTime(1000, 0.1), [["Woodcutting", 1], ["Speed", 0.2]], completeMine),
-	new Action("Kudzu Chop", getChopTime(1000, 0.1), [["Woodcutting", 1], ["Speed", 0.2]], completeMove),
-	new Action("Spore Chop", getChopTime(1000, 0.1), [["Woodcutting", 1], ["Speed", 0.2]], completeMine, null, tickSpore),
-	new Action("Oyster Chop", getChopTime(1000, 0.2), [["Woodcutting", 1], ["Speed", 0.2]], completeMine),
+	new Action(
+		"Chop",
+		getChopTime(1000, 0.1),
+		[
+			["Woodcutting", 1],
+			["Speed", 0.2]
+		],
+		completeMine
+	),
+	new Action(
+		"Kudzu Chop",
+		getChopTime(1000, 0.1),
+		[
+			["Woodcutting", 1],
+			["Speed", 0.2]
+		],
+		completeMove
+	),
+	new Action(
+		"Spore Chop",
+		getChopTime(1000, 0.1),
+		[
+			["Woodcutting", 1],
+			["Speed", 0.2]
+		],
+		completeMine,
+		null,
+		tickSpore
+	),
+	new Action(
+		"Oyster Chop",
+		getChopTime(1000, 0.2),
+		[
+			["Woodcutting", 1],
+			["Speed", 0.2]
+		],
+		completeMine
+	),
 	new Action("Create Axe", 2500, [["Smithing", 1]], simpleCreate([["Iron Axe", 1]]), simpleRequire([["Iron Bar", 1]])),
 	new Action("Create Pick", 2500, [["Smithing", 1]], simpleCreate([["Iron Pick", 1]]), simpleRequire([["Iron Bar", 1]])),
 	new Action("Create Hammer", 2500, [["Smithing", 1]], simpleCreate([["Iron Hammer", 1]]), simpleRequire([["Iron Bar", 1]])),
 	new Action("Enter Barrier", 10000, [["Chronomancy", 1]], completeBarrier, startBarrier, null, barrierDuration),
-	new Action("Exit", 50000000, [["Mining", 0.25], ["Woodcutting", 0.25], ["Magic", 0.25], ["Speed", 0.25], ["Smithing", 0.25], ["Runic Lore", 0.25], ["Combat", 0.25], ["Gemcraft", 0.25], ["Chronomancy", 0.25]], completeGame),
+	new Action(
+		"Exit",
+		50000000,
+		[
+			["Mining", 0.25],
+			["Woodcutting", 0.25],
+			["Magic", 0.25],
+			["Speed", 0.25],
+			["Smithing", 0.25],
+			["Runic Lore", 0.25],
+			["Combat", 0.25],
+			["Gemcraft", 0.25],
+			["Chronomancy", 0.25]
+		],
+		completeGame
+	)
 ];
 
 function getAction<actionName extends anyActionName>(name: actionName): anyAction {
@@ -727,4 +965,7 @@ function getAction<actionName extends anyActionName>(name: actionName): anyActio
 }
 
 getAction("Wait").getDuration = getAction("Wait").getBaseDuration = getAction("Wait").getProjectedDuration = () => <number>getAction("Wait").baseDuration;
-getAction("Long Wait").getDuration = getAction("Long Wait").getBaseDuration = getAction("Long Wait").getProjectedDuration = () => (<() => number>getAction("Long Wait").baseDuration)();
+getAction("Long Wait").getDuration =
+	getAction("Long Wait").getBaseDuration =
+	getAction("Long Wait").getProjectedDuration =
+		() => (<() => number>getAction("Long Wait").baseDuration)();

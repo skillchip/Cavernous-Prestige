@@ -75,13 +75,13 @@ class Clone {
 	}
 
 	styleDamage() {
-		if (!this.el){
+		if (!this.el) {
 			this.el = document.querySelector(`#queue${this.id}`);
 			if (!this.el) return;
 		}
 		const hp = 1 - Math.min(this.damage / getStat("Health").current);
 		(this.el.querySelector(".damage") as HTMLElement).style.width = hp == 1 || !Number.isFinite(hp) ? "0" : hp * 100 + "%";
-		if (hp < 0){
+		if (hp < 0) {
 			this.el.classList.add("dead-clone");
 		} else {
 			this.el.classList.remove("dead-clone");
@@ -89,9 +89,12 @@ class Clone {
 	}
 
 	writeStats() {
-		document.querySelector(".clone-info .health-amount")!.innerHTML = writeNumber(Math.max(getStat("Health").current - this.damage, 0), this.damage ? 2 : 0);
+		document.querySelector(".clone-info .health-amount")!.innerHTML = writeNumber(
+			Math.max(getStat("Health").current - this.damage, 0),
+			this.damage ? 2 : 0
+		);
 		const lastEntry = this.timeLines[currentZone][this.timeLines[currentZone].length - 1] || this.currentTimelineEntry;
-		if (lastEntry){
+		if (lastEntry) {
 			document.querySelector(".clone-info .action-name")!.innerHTML = lastEntry.type;
 			document.querySelector(".clone-info .action-progress")!.innerHTML = writeNumber(this.remainingTime / 1000, 2);
 		} else {
@@ -153,13 +156,13 @@ class Clone {
 			lastEntry.el.dataset.time = Math.round(lastEntry.time).toString();
 			lastEntry.el.style.flexGrow = lastEntry.time.toString();
 		} else {
-			if (settings.timeline){
+			if (settings.timeline) {
 				const entryElement = document.createElement("div");
 				entryElement.dataset.name = action.name;
 				entryElement.dataset.time = Math.round(time).toString();
 				entryElement.style.flexGrow = time.toString();
 				entryElement.classList.add(action.name.replace(/ /g, "-"));
-				if (currentZone > 0 && this.timeLines[currentZone].length == 0 && action.name == "No action"){
+				if (currentZone > 0 && this.timeLines[currentZone].length == 0 && action.name == "No action") {
 					this.timeLineElements[currentZone - 1].append(entryElement);
 					this.timeLines[currentZone - 1].push({ type: action.name, time, el: entryElement });
 				} else {
@@ -176,7 +179,8 @@ class Clone {
 	static addNewClone(loading = false) {
 		const c = new Clone(clones.length);
 		clones.push(c);
-        if (!loading) { /* Prestige add bypass */
+		if (!loading) {
+			/* Prestige add bypass */
 			if (clones.length == 2) getMessage("First Clone").display();
 			if (clones.length == 3) getMessage("Second Clone").display();
 			if (clones.length == 4) getMessage("Third Clone").display();
@@ -187,7 +191,7 @@ class Clone {
 				let q = new ActionQueue(z.queues.length);
 				z.queues.push(q);
 			}
-		})
+		});
 	}
 }
 
