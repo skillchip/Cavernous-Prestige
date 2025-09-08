@@ -88,7 +88,7 @@ class Action<actionName extends anyActionName = anyActionName> {
 
 	tick(usedTime: number, loc: MapLocation, baseTime: number = 0, clone: Clone) {
 		for (let i = 0; i < this.stats.length; i++) {
-			this.stats[i][0].gainSkill((baseTime / 1000) * this.stats[i][1]);
+            this.stats[i][0].gainSkill((baseTime / 1000) * (this.stats[i][1])*(1+.1*prestige[1].level));
 		}
 		if (this.tickExtra) {
 			this.tickExtra(usedTime, loc, baseTime, clone);
@@ -171,8 +171,8 @@ function completeMine(loc: MapLocation) {
 
 function getDuplicationAmount(loc: MapLocation) {
 	let x = loc.x, y = loc.y;
-	let amount = 1;
-	const zone = zones[currentZone];
+    let amount = Math.round((1 + 0.1*prestige[3].level) * 1000) / 1000; /* Prestige, add multiplier for point spend */
+    const zone = zones[currentZone];
 	x += zone.xOffset;
 	y += zone.yOffset;
 	const rune_locs = [
@@ -186,8 +186,8 @@ function getDuplicationAmount(loc: MapLocation) {
 		[x - 1, y - 1]
 	];
 	rune_locs.forEach(([X, Y]) => {
-		amount += +(zone.map[Y][X] == "d") * (getRune("Duplication").upgradeCount * 0.25 + 1);
-	});
+        amount += +(zone.map[Y][X] == "d") * Math.round((((1+(getRune("Duplication").upgradeCount * 0.25)) * (1 + 0.1*prestige[3].level)) * 1000)) / 1000;
+    });
 	return amount;
 }
 
@@ -247,11 +247,11 @@ function canMineMana(location: MapLocation) {
 	return CanStartReturnCode.Now;
 }
 
-function mineManaRockCost(location: MapLocation, clone: Clone | null = null, realm:number | null = null, completionOveride?: number) {
-	return location.completions && !completionOveride
-		? 0
-		: Math.pow(1 + (0.1 + 0.05 * (location.zone.index + (realm == null ? currentRealm : realm))) * longZoneCompletionMult(location.x, location.y, location.zone.index), completionOveride ?? location.priorCompletions);
-}
+function mineManaRockCost(location: MapLocation, clone: Clone | null = null, realm:number | null = null, completionOveride?: number) { /* Prestige, add mana rock reducer for point spend */
+    return location.completions && !completionOveride
+        ? 0
+        : Math.pow(1 + (0.1 + 0.05 * (location.zone.index + (realm == null ? currentRealm : realm))) * longZoneCompletionMult(location.x, location.y, location.zone.index) * (0.95 ** (prestige[2].level ** 0.75)), completionOveride ?? location.priorCompletions);
+} 
 
 function mineGemCost(location: MapLocation){
 	return (location.completions + 1) ** 1.4
@@ -368,10 +368,10 @@ function spreadDamage(damage: number, clone: Clone){
 	});
 }
 
-let combatTools: [Stuff<anyStuffName>, number, Stat<anyStatName>][] = [
-	[getStuff("Iron Axe"), 0.01, getStat("Woodcutting")],
-	[getStuff("Iron Pick"), 0.01, getStat("Mining")],
-	[getStuff("Iron Hammer"), 0.01, getStat("Smithing")]
+let combatTools: [Stuff<anyStuffName>, number, Stat<anyStatName>][] = [ /* Prestige place to increase tool stats */
+    [getStuff("Iron Axe"), 0.01*(1/*+0.1*prestige[4].level*/), getStat("Woodcutting")],
+    [getStuff("Iron Pick"), 0.01*(1/*+0.1*prestige[4].level*/), getStat("Mining")],
+    [getStuff("Iron Hammer"), 0.01*(1/*+0.1*prestige[4].level*/), getStat("Smithing")]
 ];
 
 function combatDuration() {
@@ -562,7 +562,7 @@ function predictWither(location: MapLocation) {
 	return Math.max(...adjacentPlants.map(loc => loc.type.getEnterAction(loc.entered).getProjectedDuration(loc, loc.wither))) / 2000 + 0.1;
 }
 
-function activatePortal() {
+function activatePortal() { /* Prestige copy this for pockets? */
 	breakActions = true;
 	moveToZone(currentZone + 1);
 	if (settings.pauseOnPortal && settings.running) toggleRunning();
@@ -601,13 +601,14 @@ function barrierDuration(){
 	return 1;
 }
 
-function completeGame(){
-	getMessage("You Win!").display();
-	// Reunlock VR
-	const vr = getRealm("Verdant Realm");
-	vr.maxMult = 1e308;
-	vr.completed = false;
-	vr.display();
+function completeGame() { /* Prestige add flag to allow gaining prestige, prestige points gain (once) and change message */
+    getMessage("You Win!").display();
+    // Reunlock VR
+    const vr = getRealm("Verdant Realm");
+    vr.maxMult = 1e308;
+    vr.completed = false;
+    vr.display();
+    GameComplete = 1;
 }
 
 enum ACTION {

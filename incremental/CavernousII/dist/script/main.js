@@ -36,27 +36,23 @@ function redrawTimeNode() {
     timeBankNode.innerText = writeTime(timeBanked / 1000);
 }
 window.ondrop = e => e.preventDefault();
-
 /** *************************************Super Prestiges ********************************************/
 var GameComplete = 0;
 class PrestigePoints {
-  constructor(value) {
-    this.value = value;
-  } 
+    constructor(value) {
+        this.value = value;
+    }
 }
-
 var prestigepoints = 0;
 var prestigecount = 0;
- 
 class Prestige {
-  constructor(name, level, nextcost, total) {
-    this.name = name;
-    this.level = level;
-    this.nextcost = nextcost;
-    this.total = total;
-  }
+    constructor(name, level, nextcost = 0, total = 0) {
+        this.name = name;
+        this.level = level;
+        this.nextcost = nextcost;
+        this.total = total;
+    }
 }
-
 /*
 class Prestige {
   constructor() {
@@ -72,7 +68,6 @@ class Prestige {
   }
 }
 */
-
 var prestige = [
     new Prestige("BonusClones", 0),
     new Prestige("FasterStats", 0),
@@ -81,51 +76,51 @@ var prestige = [
     new Prestige("BetterEquip", 0),
     new Prestige("SoftCap", 0),
     new Prestige("BonusZones", 0),
-  ];
-
-function prestigeGame() { /* Dangerous, should fix */
-    if(GameComplete == 1||prestigecount == 0)
-    {
+];
+function prestigeGame() {
+    if (GameComplete == 1 || prestigecount == 0) {
         exportGame();
         GameComplete = 0;
         prestigepoints += 90;
         prestigecount += 1;
-        prestige[0].level+=1;
-        prestige[1].level+=1;
-        prestige[2].level+=1;
-        prestige[3].level+=1;
-        prestige[4].level+=1;
-        prestige[5].level+=1;
-        prestige[6].level+=1;
+        prestige[0].level += 1;
+        prestige[1].level += 1;
+        prestige[2].level += 1;
+        prestige[3].level += 1;
+        prestige[4].level += 1;
+        prestige[5].level += 1;
+        prestige[6].level += 1;
         resetprogress();
     }
 }
-
 function resetprogress() {
     /*sets clones to 0*/
-    clones = []; 
+    clones = [];
     /*Resets Zones, maybe change so map doesn't reset?*/
     zones.forEach(z => {
         z.queues = ActionQueue.fromJSON([]);
         z.mapLocations = [];
         while (z.mapLocations.length < z.map.length) {
             z.mapLocations.push([]);
-            }
+        }
         z.routes = [];
-        if (z.node != null) {z.node.parentNode.removeChild(z.node)};
+        if (z.node != null) {
+            z.node.parentNode.removeChild(z.node);
+        }
+        ;
         z.node = null;
         z.goalComplete = false;
-        });
+    });
     /*sets stats to 0*/
     stats.forEach(s => {
         s.base = 0;
-        });
-    stats[12].base=10;
+    });
+    stats[12].base = 10;
     /*resets runes*/
     runes.forEach(r => {
-        r.locked = true;
+        r.unlocked = false;
         r.node = null;
-        });
+    });
     /*clear route*/
     routes = [];
     grindRoutes = [];
@@ -136,12 +131,12 @@ function resetprogress() {
     currentRealm = 0;
     /*Initialize*/
     Clone.addNewClone();
-    for(let i=0; i<prestige[0].level; ++i)
-        {Clone.addNewClone();}
+    for (let i = 0; i < prestige[0].level; ++i) {
+        Clone.addNewClone();
+    }
     resetLoop();
     save();
     window.location.reload();
-    
 }
 /*function prestigeGame() { -- Dangerous, should fix
     if(GameComplete == 1)
@@ -154,7 +149,6 @@ function resetprogress() {
         save();
     }
 }*/
-
 /*
 function BonusClones()
 {
@@ -181,8 +175,7 @@ function SoftCap()
   
 }
 */
-
-    // Fix Prestige Values for Hover - need help
+// Fix Prestige Values for Hover - need help
 /*
     let prestigenumber= document.querySelector("prestigenumber") = writeNumber(prestigecount);
     document.querySelector("prestigeval0") = writeNumber(prestige[0].level);
@@ -194,7 +187,6 @@ function SoftCap()
     document.querySelector("prestigeval5b") = writeNumber(20*prestige[5].level);
     document.querySelector("prestigeval6") = writeNumber(prestige[6].level);
 */
-
 /** ****************************************** Prestiges ********************************************/
 let resetting = false;
 function resetLoop(noLoad = false, saveGame = true) {
@@ -336,7 +328,7 @@ let save = async function save() {
         name3: "GameComplete",
         value3: GameComplete
     };
-    const prestigeArray ={
+    const prestigeArray = {
         value0: prestige[0].level,
         value1: prestige[1].level,
         value2: prestige[2].level,
@@ -345,7 +337,6 @@ let save = async function save() {
         value5: prestige[5].level,
         value6: prestige[6].level
     };
-    
     let saveGame = {
         version: version,
         playerStats: playerStats,
@@ -361,7 +352,7 @@ let save = async function save() {
         machines: machines,
         realmData: realmData,
         prestigeData: prestigeData,
-        prestigeArray: prestigeArray
+        prestigeArray: prestigeArray,
     };
     let saveString = JSON.stringify(saveGame);
     // Typescript can't find LZString, and I don't care.
@@ -450,41 +441,35 @@ function load() {
     for (let i = 0; i < realms.length; i++) {
         getRealmComplete(realms[i]);
     }
-    
     /* load prestige stuff - needs to be beautified*/
-    if(saveGame.prestigeData === null)
-    {
+    if (saveGame.prestigeData === null) {
         prestigepoints = 0;
         prestigecount = 0;
         GameComplete = 0;
     }
-    else
-    {
+    else {
         prestigepoints = saveGame.prestigeData.value1;
         prestigecount = saveGame.prestigeData.value2;
         GameComplete = saveGame.prestigeData.value3;
     }
-    if(saveGame.prestigeArray === null)
-    {
+    if (saveGame.prestigeArray === null) {
         prestige[0].level = 0;
         prestige[1].level = 0;
         prestige[2].level = 0;
         prestige[3].level = 0;
         prestige[4].level = 0;
         prestige[5].level = 0;
-        prestige[6].level = 0;  
+        prestige[6].level = 0;
     }
-    else
-    {
+    else {
         prestige[0].level = saveGame.prestigeArray.value0;
         prestige[1].level = saveGame.prestigeArray.value1;
         prestige[2].level = saveGame.prestigeArray.value2;
         prestige[3].level = saveGame.prestigeArray.value3;
         prestige[4].level = saveGame.prestigeArray.value4;
         prestige[5].level = saveGame.prestigeArray.value5;
-        prestige[6].level = saveGame.prestigeArray.value6;   
+        prestige[6].level = saveGame.prestigeArray.value6;
     }
-    
     loadSettings(saveGame.settings);
     zones[0].queues[0].selected = true;
     queuesNode = queuesNode || document.querySelector("#queues");

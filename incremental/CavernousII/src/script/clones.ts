@@ -176,7 +176,7 @@ class Clone {
 	static addNewClone(loading = false) {
 		const c = new Clone(clones.length);
 		clones.push(c);
-		if (!loading) {
+        if (!loading) { /* Prestige add bypass */
 			if (clones.length == 2) getMessage("First Clone").display();
 			if (clones.length == 3) getMessage("Second Clone").display();
 			if (clones.length == 4) getMessage("Third Clone").display();

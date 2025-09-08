@@ -153,11 +153,11 @@ function convertMapToVerdant(map:Zone["map"], zoneNumber: number): string[] {
 
 const realms:Realm[] = [];
 realms.push(
-	// Default realm, no special effects.
+	// Default realm, no special effects. /* Prestige have clones.length remove prestige bonus clones from cost */
 	new Realm(
 		"Core Realm",
 		"Where you started.  Hopefully, how you'll leave this cave complex.",
-		() => clones.length,
+		() => clones.length - prestige[0].level,
 		() => Clone.addNewClone()
 	));
 

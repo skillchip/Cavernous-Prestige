@@ -42,7 +42,7 @@ class Route {
             this.require = zones[currentZone].startStuff.map(s => {
                 return {
                     "name": s.name,
-                    "count": Math.round((s.count - getStuff(s.name).min)*1000)/1000, /*forcing rounding*/
+                    "count": Math.round((s.count - getStuff(s.name).min) * 1000) / 1000, /*forcing rounding*/
                 };
             }).filter(s => s.count > 0);
             this.cloneArriveTimes = clones.filter(c => c.x == this.x && c.y == this.y && zones[this.zone].queues[c.id].getNextAction()?.action === "I")
@@ -168,7 +168,7 @@ class Route {
         this.require = zones[currentZone].startStuff.map(s => {
             return {
                 "name": s.name,
-                "count": Math.round((s.count - getStuff(s.name).min)*1000)/1000, /*forcing rounding*/
+                "count": Math.round((s.count - getStuff(s.name).min) * 1000) / 1000, /*forcing rounding*/
             };
         }).filter(s => s.count > 0);
         const arrivedClones = clones.filter(c => c.x == this.x && c.y == this.y && zones[this.zone].queues[c.id].getNextAction()?.action === "I").length;

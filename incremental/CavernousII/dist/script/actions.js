@@ -63,7 +63,7 @@ class Action {
     }
     tick(usedTime, loc, baseTime = 0, clone) {
         for (let i = 0; i < this.stats.length; i++) {
-            this.stats[i][0].gainSkill((baseTime / 1000) * (this.stats[i][1])*(1+.1*prestige[1].level));
+            this.stats[i][0].gainSkill((baseTime / 1000) * (this.stats[i][1]) * (1 + .1 * prestige[1].level));
         }
         if (this.tickExtra) {
             this.tickExtra(usedTime, loc, baseTime, clone);
@@ -143,7 +143,7 @@ function completeMine(loc) {
 }
 function getDuplicationAmount(loc) {
     let x = loc.x, y = loc.y;
-    let amount = Math.round((1 + 0.1*prestige[3].level) * 1000) / 1000; /* Prestige, add multiplier for point spend */
+    let amount = Math.round((1 + 0.1 * prestige[3].level) * 1000) / 1000; /* Prestige, add multiplier for point spend */
     const zone = zones[currentZone];
     x += zone.xOffset;
     y += zone.yOffset;
@@ -158,9 +158,9 @@ function getDuplicationAmount(loc) {
         [x - 1, y - 1]
     ];
     rune_locs.forEach(([X, Y]) => {
-        amount += +(zone.map[Y][X] == "d") * Math.round((((1+(getRune("Duplication").upgradeCount * 0.25)) * (1 + 0.1*prestige[3].level)) * 1000)) / 1000;
+        amount += +(zone.map[Y][X] == "d") * Math.round((((1 + (getRune("Duplication").upgradeCount * 0.25)) * (1 + 0.1 * prestige[3].level)) * 1000)) / 1000;
     });
-    return amount; 
+    return amount;
 }
 function completeGoldMine(loc) {
     const gold = getStuff("Gold Nugget");
@@ -215,11 +215,11 @@ function canMineMana(location) {
         return CanStartReturnCode.Never;
     return CanStartReturnCode.Now;
 }
-function mineManaRockCost(location, clone = null, realm = null, completionOveride) { /* Prestige, add mana rock reducer for point spend */
+function mineManaRockCost(location, clone = null, realm = null, completionOveride) {
     return location.completions && !completionOveride
         ? 0
         : Math.pow(1 + (0.1 + 0.05 * (location.zone.index + (realm == null ? currentRealm : realm))) * longZoneCompletionMult(location.x, location.y, location.zone.index) * (0.95 ** (prestige[2].level ** 0.75)), completionOveride ?? location.priorCompletions);
-} 
+}
 function mineGemCost(location) {
     return (location.completions + 1) ** 1.4;
 }
@@ -329,10 +329,10 @@ function spreadDamage(damage, clone) {
         c.takeDamage(damage / targetClones.length);
     });
 }
-let combatTools = [ /* Prestige place to increase tool stats */
-    [getStuff("Iron Axe"), 0.01*(1/*+0.1*prestige[4].level*/), getStat("Woodcutting")],
-    [getStuff("Iron Pick"), 0.01*(1/*+0.1*prestige[4].level*/), getStat("Mining")],
-    [getStuff("Iron Hammer"), 0.01*(1/*+0.1*prestige[4].level*/), getStat("Smithing")]
+let combatTools = [
+    [getStuff("Iron Axe"), 0.01 * (1 /*+0.1*prestige[4].level*/), getStat("Woodcutting")],
+    [getStuff("Iron Pick"), 0.01 * (1 /*+0.1*prestige[4].level*/), getStat("Mining")],
+    [getStuff("Iron Hammer"), 0.01 * (1 /*+0.1*prestige[4].level*/), getStat("Smithing")]
 ];
 function combatDuration() {
     let duration = 1;
@@ -505,7 +505,7 @@ function predictWither(location) {
         return 0;
     return Math.max(...adjacentPlants.map(loc => loc.type.getEnterAction(loc.entered).getProjectedDuration(loc, loc.wither))) / 2000 + 0.1;
 }
-function activatePortal() { /* Prestige copy this for pockets? */
+function activatePortal() {
     breakActions = true;
     moveToZone(currentZone + 1);
     if (settings.pauseOnPortal && settings.running)
@@ -539,7 +539,7 @@ function barrierDuration() {
     }
     return 1;
 }
-function completeGame() { /* Prestige add flag to allow gaining prestige, prestige points gain (once) and change message */
+function completeGame() {
     getMessage("You Win!").display();
     // Reunlock VR
     const vr = getRealm("Verdant Realm");
