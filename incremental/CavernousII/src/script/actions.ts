@@ -218,14 +218,21 @@ function completeSaltMine(loc: MapLocation) {
 function completeCollectMana(loc: MapLocation) {
 	Route.updateBestRoute(loc, true);
 	zones[currentZone].mineComplete();
-	setMined(loc.x, loc.y, ".");
 	if (realms[currentRealm].name === "Long Realm") {
 		routes.forEach(r => {
 			if (r.zone !== loc.zone.index || r.x !== loc.x || r.y !== loc.y) return;
 			r.needsNewEstimate = true;
 		});
 	}
-	if (settings.autoRestart == AutoRestart.RestartDone && settings.grindMana) shouldReset = true;
+	// Check if estimate can do one more run.
+	const mana = getStat("Mana");
+    if (settings.autoRestart == AutoRestart.RestartDone && settings.grindMana) {
+		const cur = currentRoutes.find(r => r.x == loc.x && r.y == loc.y && r.zone == currentZone);
+		if (!cur || cur.estimateRefineManaLeft() < 0) {
+			shouldReset = true;
+		}
+	}
+	// if (settings.autoRestart == AutoRestart.RestartDone && settings.grindMana) shouldReset = true;
 	getRealmComplete(realms[currentRealm]);
 }
 
@@ -241,30 +248,40 @@ function longZoneCompletionMult(x: number, y: number, z: number) {
 }
 
 function canMineMana(location: MapLocation) {
+	// if (location.completions) return CanStartReturnCode.Never;
 	return CanStartReturnCode.Now;
+}
+
+function multiMineManaRockCostDifferential(location: MapLocation, completions: number) {
+	currentRoutes
+	const formula = 1 +
+			(0.1 + 0.05 * (location.zone.index + currentRealm)) *
+				longZoneCompletionMult(location.x, location.y, location.zone.index) *
+				0.95 ** (prestige[2].level ** 0.75);
+
+	return Math.pow(formula, location.priorCompletions + completions) - 
+			completions > 0 ? Math.pow(formula, location.priorCompletions + completions - 1) : 0;
 }
 
 function mineManaRockCost(location: MapLocation, clone: Clone | null = null, realm: number | null = null, completionOveride?: number) {
 	/* Prestige, add mana rock reducer for point spend */
-	// If completed previously in this route, subtract previous time.
-	const duration = Math.pow(
-		1 +
+	// return Math.pow(
+	// 			1 +
+	// 				(0.1 + 0.05 * (location.zone.index + (realm == null ? currentRealm : realm))) *
+	// 					longZoneCompletionMult(location.x, location.y, location.zone.index) *
+	// 					0.95 ** (prestige[2].level ** 0.75),
+	// 			completionOveride ?? location.priorCompletions
+	// 	  );
+	const formula = 1 +
 			(0.1 + 0.05 * (location.zone.index + (realm == null ? currentRealm : realm))) *
 				longZoneCompletionMult(location.x, location.y, location.zone.index) *
-				0.95 ** (prestige[2].level ** 0.75),
-		completionOveride ?? location.priorCompletions
-	);
-	if (location.completions) {
-		return duration - 
-			Math.pow(
-					1 +
-						(0.1 + 0.05 * (location.zone.index + (realm == null ? currentRealm : realm))) *
-							longZoneCompletionMult(location.x, location.y, location.zone.index) *
-							0.95 ** (prestige[2].level ** 0.75),
-				(completionOveride ?? location.priorCompletions) - 1
-			);
+				0.95 ** (prestige[2].level ** 0.75);
+	// If completed previously in this route, subtract previous time.
+	if (location.completions && !completionOveride) {
+		return Math.pow(formula, location.priorCompletions + location.completions) - 
+			Math.pow(formula, location.priorCompletions + location.completions - 1);
 	}
-	return duration;
+	return Math.pow(formula, completionOveride ?? location.priorCompletions);
 }
 
 function mineGemCost(location: MapLocation) {
