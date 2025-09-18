@@ -127,6 +127,7 @@ function resetprogress() {
         re.completed = false;
         re.machineCompletions = 0;
         });
+    realms[0].unlock()
     /*resets runes*/
     runes.forEach(r => {
         r.locked = true;
