@@ -139,8 +139,8 @@ function resetprogress() {
     for(let i=0; i<prestige[0].level; ++i)
         {Clone.addNewClone();}
     /*Remove Message*/
-    for (let i = 0; i < Message.messages.length; i++)
-        {Message.messages[i].displayed=true;}
+    for (let i = 0; i < messages.length; i++)
+        {messages[i].displayed=true;}
     resetLoop();
     save();
     window.location.reload();
