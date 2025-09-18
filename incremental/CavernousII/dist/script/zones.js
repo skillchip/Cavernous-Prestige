@@ -152,7 +152,7 @@ class Zone {
             });
         }
         this.display();
-        currentLoopLog.moveZone();
+        currentLoopLog.moveZone(`z${this.index + 1}`);
     }
     sumRoute(require, startDamage, actionCount) {
         let routeOptions = this.routes
@@ -181,11 +181,12 @@ class Zone {
                     return h;
                 return Math.max(h + r.cloneHealth[i][1], 0) + r.cloneHealth[0][0];
             });
-            let effectiveMana = r.mana + (Math.floor(r.stuff.find(s => s.name == "Gold Nugget")?.count || 0) * (GOLD_VALUE * getRealmMult("Verdant Realm", true) - 1 / clones.length));
+            let effectiveMana = r.mana +
+                Math.floor(r.stuff.find(s => s.name == "Gold Nugget")?.count || 0) * (GOLD_VALUE * getRealmMult("Verdant Realm", true) - 1 / clones.length);
             let result = [r, r.require, health, effectiveMana];
             return result;
         });
-        return routeOptions.sort((a, b) => actionCount && a[0].actionCount != b[0].actionCount ? a[0].actionCount - b[0].actionCount : b[3] - a[3]);
+        return routeOptions.sort((a, b) => (actionCount && a[0].actionCount != b[0].actionCount ? a[0].actionCount - b[0].actionCount : b[3] - a[3]));
     }
     enterZone() {
         this.display();
@@ -297,7 +298,7 @@ class Zone {
                     routeNode.querySelector(".actions").innerHTML = this.routes[i].actionCount.toString() + "&nbsp;";
                 routeNode.querySelector(".mana").innerHTML = this.routes[i].mana.toFixed(2);
                 displayStuff(routeNode, this.routes[i]);
-                routeNode.onclick = (e) => {
+                routeNode.onclick = e => {
                     if (e.shiftKey) {
                         if (this.routes[i].isLocked) {
                             this.routes[i].isLocked = false;
@@ -326,7 +327,8 @@ class Zone {
                     routeNode.classList.add("unused");
                     routeNode.title += "This route is not used for any saved route. ";
                 }
-                if (this.index > 0 && !zones[this.index - 1].sumRoute(this.routes[i].require, this.routes[i].cloneHealth.map(c => c[0]), this.routes[i].actionCount).length) {
+                if (this.index > 0 &&
+                    !zones[this.index - 1].sumRoute(this.routes[i].require, this.routes[i].cloneHealth.map(c => c[0]), this.routes[i].actionCount).length) {
                     routeNode.classList.add("orphaned");
                     routeNode.title += "This route has no valid predecessor. ";
                 }
@@ -416,6 +418,7 @@ function moveToZone(zone, complete = true) {
         clearCursors();
     }
     currentZone = zone;
+    document.querySelector("#barrier-mult").style.display = "none";
     zones[zone].enterZone();
 }
 function recalculateMana() {
@@ -456,7 +459,7 @@ const zones = [
         "█#%█##♠#%████ Θ██☼#+█",
         "██%███#█#%#██████+¤+█",
         "█¤#¥██++██#£░╖√██████",
-        "█████████████████████",
+        "█████████████████████"
     ], () => {
         getMessage("Unlocked Duplication Rune").display();
         getRune("Duplication").unlock();
@@ -482,7 +485,7 @@ const zones = [
         "██3████████████████",
         "██««○♣¤████████████",
         "████○██████████████",
-        "███████████████████",
+        "███████████████████"
     ], () => {
         getMessage("Unlocked Weaken Rune").display();
         getRune("Weaken").unlock();
@@ -504,7 +507,7 @@ const zones = [
         "██#██%██#██░█%%█««████",
         "█%#+█%○█##█¤█%%█░○████",
         "██+¤█████████%██¤£████",
-        "██████████████████████",
+        "██████████████████████"
     ], () => {
         getMessage("Unlocked Wither Rune").display();
         getRune("Wither").unlock();
@@ -528,7 +531,7 @@ const zones = [
         "█ ████}█+███c█«««██",
         "█ ██^███♠♠♠+α+«████",
         "█ m1+++♠♠████¤█████",
-        "███████████████████",
+        "███████████████████"
     ], () => {
         getMessage("Other Realms").display();
         realms[0].unlock();
@@ -553,7 +556,7 @@ const zones = [
         "██«██0«████««╖█¤███",
         "██+███s«««««███3███",
         "██~~~¤██¤█████¤δ███",
-        "███████████████████",
+        "███████████████████"
     ], () => {
         getMessage("Further Realms").display();
         realms[2].unlock();
@@ -581,7 +584,7 @@ const zones = [
         "██%<█2█╖  m+++██",
         "█████╖╖╖██]██3██",
         "████████████¤~██",
-        "████████████████",
+        "████████████████"
     ], () => {
         getMessage("Unlocked Teleport Runes").display();
         getRune("Teleport To").unlock();
@@ -606,18 +609,18 @@ const zones = [
         "██+╖╖╖♣█+╖♣╖+█1█¤█",
         "████+█████+███ ╖╖█",
         "████████████████)█",
-        "██████████████████",
+        "██████████████████"
     ], () => {
         getMessage("Compounding Realm").display();
         realms[3].unlock();
     }),
     new Zone("Zone 8", [
         "████████████████",
-        "███████■☼■██████",
-        "███§§¤■§☼§█++♥██",
-        "███G███§■§■■■■██",
-        "██+^+███■██++███",
-        "███2███¤+=██████",
+        "███████■☼■█■■■■█",
+        "███§§¤■§☼§█++♥■█",
+        "███G███§■§■■■■■█",
+        "██+^+███■██++■■█",
+        "███2███¤+=█■■■██",
         "███2████+███████",
         "██+++██#G#█δ3δ██",
         "███■███♣.♣123X!█",
@@ -630,32 +633,10 @@ const zones = [
         "███■1+╖╖╖δδδ████",
         "███¤████████████",
         "███33■■■++++¤███",
-        "████████████████",
+        "████████████████"
     ], () => {
         getMessage("Unlocked Pump Rune").display();
         getRune("Pump").unlock();
-    }),
-    new Zone("Zone 1P", [
-        "████████████████",
-        "████████████████",
-        "████████████████",
-        "████████████████",
-        "████████████████",
-        "████████████████",
-        "████████████████",
-        "████████████████",
-        "████████.███████",
-        "████████████████",
-        "████████████████",
-        "████████████████",
-        "████████████████",
-        "████████████████",
-        "████████████████",
-        "████████████████",
-        "████████████████",
-        "████████████████",
-        "████████████████",
-    ], () => {
     })
 ];
 //# sourceMappingURL=zones.js.map

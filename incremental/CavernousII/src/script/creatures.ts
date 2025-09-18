@@ -13,24 +13,24 @@ class BaseCreature {
 }
 
 let baseCreatures = [
-	new BaseCreature('Goblin', 5, 0, 12),
-	new BaseCreature('Goblin Chieftain', 7, 3, 20),
-	new BaseCreature('Skeleton', 5, 5, 50),
-	new BaseCreature('Goblin Champion', 15, 8, 50),
-	new BaseCreature('Golem', 15, 15, 50),
-	new BaseCreature('Guardian', 25, 20, 100),
+	new BaseCreature("Goblin", 5, 0, 12),
+	new BaseCreature("Goblin Chieftain", 7, 3, 20),
+	new BaseCreature("Skeleton", 5, 5, 50),
+	new BaseCreature("Goblin Champion", 15, 8, 50),
+	new BaseCreature("Golem", 15, 15, 50),
+	new BaseCreature("Guardian", 25, 20, 100)
 ];
 
 class Creature {
-	creature:BaseCreature;
+	creature: BaseCreature;
 	name: string;
 	attack: number;
 	defense: number;
 	health: number;
-	x:number;
-	y:number;
+	x: number;
+	y: number;
 
-	constructor(creature:BaseCreature, x:number, y:number) {
+	constructor(creature: BaseCreature, x: number, y: number) {
 		this.creature = creature;
 		this.name = creature.name;
 		this.attack = creature.attack;
@@ -45,12 +45,12 @@ class Creature {
 	}
 }
 
-function getCreature(search:string | [number, number]) {
-	if (typeof search == 'string') {
+function getCreature(search: string | [number, number]) {
+	if (typeof search == "string") {
 		return baseCreatures.find(a => a.name == search);
 	} else {
 		return creatures.find(c => c.x == search[0] && c.y == search[1]);
 	}
 }
 
-let creatures:Creature[] = [];
+let creatures: Creature[] = [];

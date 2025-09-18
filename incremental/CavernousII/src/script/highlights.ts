@@ -5,8 +5,8 @@ let hoverLocation: HTMLElement | null = null;
 const HIGHLIGHT_TYPES = {
 	FINAL: 0,
 	HOVER: 1,
-	CURSOR: 2,
-}
+	CURSOR: 2
+};
 
 function showLocationAfterSteps(index: number, queueNumber: number, isDraw = false, highlightType = HIGHLIGHT_TYPES.FINAL) {
 	if (index == -1) return;
@@ -44,7 +44,7 @@ function getQueueOffset(x: number | undefined, y: number | undefined, queue: Act
 	return [x, y];
 }
 
-function getActionOffset(x: number, y: number, action:string) {
+function getActionOffset(x: number, y: number, action: string) {
 	if (action[0] == "P") {
 		let _;
 		const match = action.match(/P(-?\d+):(-?\d+);/);
@@ -93,5 +93,5 @@ function showCursorLocations() {
 	zones[displayZone].queues.forEach(queue => {
 		if (queue.cursor === null) return;
 		showLocationAfterSteps(queue.cursor, queue.index, false, HIGHLIGHT_TYPES.CURSOR);
-	})
+	});
 }

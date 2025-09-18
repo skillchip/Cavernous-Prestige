@@ -14,7 +14,7 @@ function assertEqual(expected, actual) {
     errors.push({
         expected,
         actual,
-        trace,
+        trace
     });
 }
 async function waitForPause() {
@@ -26,7 +26,7 @@ async function waitForPause() {
                     resolve(true);
                 }
                 return true;
-            },
+            }
         });
     });
 }

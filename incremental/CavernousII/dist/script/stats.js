@@ -41,7 +41,7 @@ class Stat {
         if (!this.learnable) {
             return;
         }
-        const scalingStart = 99 + getRealmMult("Compounding Realm")*(1+prestige[5].level)+prestige[5].level*20; /* Prestige place to add Scaling Stat bonus */
+        const scalingStart = 99 + getRealmMult("Compounding Realm") * (1 + prestige[5].level) + prestige[5].level * 20; /* Prestige place to add Scaling Stat bonus */
         const val = (this.current + 1) ** (0.9 * (this.base > scalingStart ? scalingStart / this.base : 1) ** 0.05) - (this.base + 1);
         if (val < 0) {
             return;
@@ -50,14 +50,15 @@ class Stat {
         if (prevVal < 0) {
             prevVal = 0;
         }
-        const increase = (val - prevVal) / this.statIncreaseDivisor * (0.99 + getRealmMult("Compounding Realm")*(1+prestige[5].level) / 100 + prestige[5].level*20/100);
+        const increase = ((val - prevVal) / this.statIncreaseDivisor) *
+            (0.99 + (getRealmMult("Compounding Realm") * (1 + prestige[5].level)) / 100 + (prestige[5].level * 20) / 100);
         this.base += increase;
     }
     setStat(amount) {
-        if (isNaN(+amount)) {
+        // Combat stats don't decrease during one loop.
+        if (isNaN(+amount) || this.base + amount < this.current) {
             return;
         }
-        // For combat stats.
         this.current = this.base + amount;
         this.dirty = true;
         this.update();
@@ -115,13 +116,16 @@ class Stat {
                 this.lastIncreaseUpdate = this.base;
             }
             const grindRoute = GrindRoute.getBestRoute(this.name);
-            this.descriptionNode.innerText = `${this.description} (${writeNumber(100 - this.value * 100, 1)}%)
+            this.descriptionNode.innerText =
+                `${this.description} (${writeNumber(100 - this.value * 100, 1)}%)
 			Increase at: ${writeNumber(increaseRequired, 2)}
-			Current: ${writeNumber(this.current, 2)} + ${writeNumber(this.current < 100 ? this.bonus : this.current * (100 + this.bonus) / 100 - this.current, 2)}` +
-                (grindRoute ? `
+			Current: ${writeNumber(this.current, 2)} + ${writeNumber(this.current < 100 ? this.bonus : (this.current * (100 + this.bonus)) / 100 - this.current, 2)}` +
+                    (grindRoute
+                        ? `
 			Click to load best grind route (projected +${writeNumber(grindRoute?.projectedGain || 0, 3)}) in ${writeNumber(grindRoute?.totalTime / 1000 || 0, 1)}s
 			This route is in the ${realms[grindRoute.realm].name}.
-			Ctrl-click to delete this stat's grind route.` : "");
+			Ctrl-click to delete this stat's grind route.`
+                        : "");
         }
         this.dirty = false;
     }
@@ -206,8 +210,9 @@ function getStat(name) {
     return stats.find(a => a.name === name);
 }
 function getBaseMana(zone = currentZone, realm = currentRealm) {
-    return MANA_START + zones.reduce((a, z, i) => {
-        return i > zone ? a : a + z.cacheManaGain[realm];
-    }, 0);
+    return (MANA_START +
+        zones.reduce((a, z, i) => {
+            return i > zone ? a : a + z.cacheManaGain[realm];
+        }, 0));
 }
 //# sourceMappingURL=stats.js.map

@@ -100,7 +100,7 @@ class Zone {
 		}
 		if (this.goalComplete) this.map = this.map.map(row => row.replace("√", "#"));
 		let unlockedBarriers = getRealm("Compounding Realm").machineCompletions;
-		for (let i = 1; i <= 9; i++){
+		for (let i = 1; i <= 9; i++) {
 			if (i > unlockedBarriers) this.map = this.map.map(row => row.replace(i.toString(), "█"));
 		}
 		this.mapLocations.forEach((ml, y) => {
@@ -113,7 +113,7 @@ class Zone {
 	}
 
 	mineComplete() {
-		let realm:Realm
+		let realm: Realm;
 		this.manaGain = +(this.manaGain + 0.1).toFixed(2);
 		let mana = getStat("Mana");
 		mana.base = +(mana.base + 0.1).toFixed(2);
@@ -122,11 +122,11 @@ class Zone {
 		if (this.index) {
 			zones[this.index - 1].mineComplete();
 		}
-		realm = getRealm("Verdant Realm")
+		realm = getRealm("Verdant Realm");
 		if (realms[currentRealm].name == "Verdant Realm" && this.index == 0 && realm.mult !== null) {
 			realm.mult += 0.0005;
 		}
-		realm = getRealm("Compounding Realm")
+		realm = getRealm("Compounding Realm");
 		if (realms[currentRealm].name == "Compounding Realm" && this.index == 0 && realm.mult !== null) {
 			realm.mult += 0.05;
 			stats
@@ -165,13 +165,13 @@ class Zone {
 				needRecalc = true;
 			}
 		}
-		if (needRecalc){
+		if (needRecalc) {
 			routes.forEach(r => {
 				if (r.realm == currentRealm && r.zone > this.index) r.needsNewEstimate = true;
 			});
 		}
 		this.display();
-		currentLoopLog.moveZone();
+		currentLoopLog.moveZone(`z${this.index + 1}`);
 	}
 
 	sumRoute(require: simpleStuffList, startDamage: number[], actionCount: number) {
@@ -199,11 +199,13 @@ class Zone {
 					if (r.cloneHealth[i] === undefined) return h;
 					return Math.max(h + r.cloneHealth[i][1], 0) + r.cloneHealth[0][0];
 				});
-				let effectiveMana = r.mana + (Math.floor(r.stuff.find(s => s.name == "Gold Nugget")?.count || 0) * (GOLD_VALUE * getRealmMult("Verdant Realm", true) - 1 / clones.length));
+				let effectiveMana =
+					r.mana +
+					Math.floor(r.stuff.find(s => s.name == "Gold Nugget")?.count || 0) * (GOLD_VALUE * getRealmMult("Verdant Realm", true) - 1 / clones.length);
 				let result: [ZoneRoute, ZoneRoute["require"], number[], number] = [r, r.require, health, effectiveMana];
 				return result;
 			});
-		return routeOptions.sort((a, b) => actionCount && a[0].actionCount != b[0].actionCount ? a[0].actionCount - b[0].actionCount : b[3] - a[3]);
+		return routeOptions.sort((a, b) => (actionCount && a[0].actionCount != b[0].actionCount ? a[0].actionCount - b[0].actionCount : b[3] - a[3]));
 	}
 
 	enterZone() {
@@ -279,10 +281,13 @@ class Zone {
 			drawMap();
 			redrawQueues();
 			zoneTimeNode = zoneTimeNode || document.querySelector("#time-spent-zone");
-			if (this.zoneStartTime == -1){
+			if (this.zoneStartTime == -1) {
 				zoneTimeNode.innerText = "0";
 			} else {
-				zoneTimeNode.innerText = writeNumber(Math.max(0, (zones[this.index + 1]?.zoneStartTime + 1 || queueTime) - 1 - (this.zoneStartTime  || 0)) / 1000, 1);
+				zoneTimeNode.innerText = writeNumber(
+					Math.max(0, (zones[this.index + 1]?.zoneStartTime + 1 || queueTime) - 1 - (this.zoneStartTime || 0)) / 1000,
+					1
+				);
 			}
 		};
 		if (this.routesChanged) {
@@ -307,9 +312,9 @@ class Zone {
 				if (this.routes[i].actionCount) routeNode.querySelector(".actions")!.innerHTML = this.routes[i].actionCount.toString() + "&nbsp;";
 				routeNode.querySelector(".mana")!.innerHTML = this.routes[i].mana.toFixed(2);
 				displayStuff(routeNode, this.routes[i]);
-				routeNode.onclick = (e) => {
-					if (e.shiftKey){
-						if (this.routes[i].isLocked){
+				routeNode.onclick = e => {
+					if (e.shiftKey) {
+						if (this.routes[i].isLocked) {
 							this.routes[i].isLocked = false;
 							routeNode.querySelector<HTMLElement>(".delete-route-inner")!.innerHTML = "x";
 							routeNode.querySelector<HTMLElement>(".delete-route-inner")!.onclick = this.deleteRoute.bind(this, i);
@@ -325,7 +330,7 @@ class Zone {
 					routeNode.classList.add("active");
 				};
 				routeNode.title = "";
-				if (this.routes[i].isLocked){
+				if (this.routes[i].isLocked) {
 					routeNode.querySelector<HTMLElement>(".delete-route-inner")!.innerHTML = "";
 				} else {
 					routeNode.querySelector<HTMLElement>(".delete-route-inner")!.onclick = this.deleteRoute.bind(this, i);
@@ -334,7 +339,14 @@ class Zone {
 					routeNode.classList.add("unused");
 					routeNode.title += "This route is not used for any saved route. ";
 				}
-				if (this.index > 0 && !zones[this.index - 1].sumRoute(this.routes[i].require, this.routes[i].cloneHealth.map(c => c[0]), this.routes[i].actionCount).length){
+				if (
+					this.index > 0 &&
+					!zones[this.index - 1].sumRoute(
+						this.routes[i].require,
+						this.routes[i].cloneHealth.map(c => c[0]),
+						this.routes[i].actionCount
+					).length
+				) {
 					routeNode.classList.add("orphaned");
 					routeNode.title += "This route has no valid predecessor. ";
 				}
@@ -377,13 +389,13 @@ class Zone {
 			});
 	}
 
-	clearRoutes(event: MouseEvent){
+	clearRoutes(event: MouseEvent) {
 		if (!event.ctrlKey && !event.metaKey) return;
 		if (settings.warnings && !confirm(`Really delete unused routes?`)) return;
 		clearUnusedZoneRoutes(this.index);
 	}
 
-	deleteRoute(index: number, event:Event) {
+	deleteRoute(index: number, event: Event) {
 		this.routes.splice(index, 1);
 		markRoutesChanged();
 		this.display();
@@ -399,7 +411,7 @@ class Zone {
 	tick(time: number) {
 		// Optimize by keeping a list of watery locations?
 		this.mapLocations.forEach(row => row.forEach(loc => loc.zoneTick(time)));
-		if (this.manaDrain){
+		if (this.manaDrain) {
 			let drainValue = time * this.manaDrain * getStat("Chronomancy").value;
 			getStat("Mana").spendMana(drainValue / 1000);
 			currentLoopLog.addActionTime("Barrier Drain", this.index, drainValue * clones.length);
@@ -412,7 +424,7 @@ function markRoutesChanged() {
 	zones.forEach(z => (z.routesChanged = true));
 }
 
-function moveToZone(zone:string|number, complete = true) {
+function moveToZone(zone: string | number, complete = true) {
 	if (typeof zone == "string") {
 		zone = zones.findIndex(z => z.name == zone);
 	}
@@ -426,6 +438,7 @@ function moveToZone(zone:string|number, complete = true) {
 		clearCursors();
 	}
 	currentZone = zone;
+	(<HTMLElement>document.querySelector("#barrier-mult")!).style.display = "none";
 	zones[zone].enterZone();
 }
 
@@ -469,7 +482,7 @@ const zones = [
 			"█#%█##♠#%████ Θ██☼#+█",
 			"██%███#█#%#██████+¤+█",
 			"█¤#¥██++██#£░╖√██████",
-			"█████████████████████",
+			"█████████████████████"
 		],
 		() => {
 			getMessage("Unlocked Duplication Rune").display();
@@ -499,7 +512,7 @@ const zones = [
 			"██3████████████████",
 			"██««○♣¤████████████",
 			"████○██████████████",
-			"███████████████████",
+			"███████████████████"
 		],
 		() => {
 			getMessage("Unlocked Weaken Rune").display();
@@ -525,7 +538,7 @@ const zones = [
 			"██#██%██#██░█%%█««████",
 			"█%#+█%○█##█¤█%%█░○████",
 			"██+¤█████████%██¤£████",
-			"██████████████████████",
+			"██████████████████████"
 		],
 		() => {
 			getMessage("Unlocked Wither Rune").display();
@@ -553,7 +566,7 @@ const zones = [
 			"█ ████}█+███c█«««██",
 			"█ ██^███♠♠♠+α+«████",
 			"█ m1+++♠♠████¤█████",
-			"███████████████████",
+			"███████████████████"
 		],
 		() => {
 			getMessage("Other Realms").display();
@@ -582,7 +595,7 @@ const zones = [
 			"██«██0«████««╖█¤███",
 			"██+███s«««««███3███",
 			"██~~~¤██¤█████¤δ███",
-			"███████████████████",
+			"███████████████████"
 		],
 		() => {
 			getMessage("Further Realms").display();
@@ -614,7 +627,7 @@ const zones = [
 			"██%<█2█╖  m+++██",
 			"█████╖╖╖██]██3██",
 			"████████████¤~██",
-			"████████████████",
+			"████████████████"
 		],
 		() => {
 			getMessage("Unlocked Teleport Runes").display();
@@ -643,7 +656,7 @@ const zones = [
 			"██+╖╖╖♣█+╖♣╖+█1█¤█",
 			"████+█████+███ ╖╖█",
 			"████████████████)█",
-			"██████████████████",
+			"██████████████████"
 		],
 		() => {
 			getMessage("Compounding Realm").display();
@@ -654,11 +667,11 @@ const zones = [
 		"Zone 8",
 		[
 			"████████████████",
-			"███████■☼■██████",
-			"███§§¤■§☼§█++♥██",
-			"███G███§■§■■■■██",
-			"██+^+███■██++███",
-			"███2███¤+=██████",
+			"███████■☼■█■■■■█",
+			"███§§¤■§☼§█++♥■█",
+			"███G███§■§■■■■■█",
+			"██+^+███■██++■■█",
+			"███2███¤+=█■■■██",
 			"███2████+███████",
 			"██+++██#G#█δ3δ██",
 			"███■███♣.♣123X!█",
@@ -671,7 +684,7 @@ const zones = [
 			"███■1+╖╖╖δδδ████",
 			"███¤████████████",
 			"███33■■■++++¤███",
-			"████████████████",
+			"████████████████"
 		],
 		() => {
 			getMessage("Unlocked Pump Rune").display();

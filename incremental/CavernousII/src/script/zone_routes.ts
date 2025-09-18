@@ -35,7 +35,7 @@ class ZoneRoute {
 				.map(s => {
 					return {
 						name: s.name,
-						count: s.count,
+						count: s.count
 					};
 				})
 				.filter(s => s.count > 0);
@@ -46,7 +46,7 @@ class ZoneRoute {
 				.map(s => {
 					return {
 						name: s.name,
-						count: s.count,
+						count: s.count
 					};
 				})
 				.filter(s => s.count > 0);
@@ -56,7 +56,7 @@ class ZoneRoute {
 		}
 
 		Object.assign(this, z);
-		if (!this.id){
+		if (!this.id) {
 			this.id = zoneRouteCount++;
 		} else {
 			zoneRouteCount = Math.max(zoneRouteCount, this.id + 1);
@@ -79,8 +79,11 @@ class ZoneRoute {
 			this.realm == zoneRoute.realm &&
 			this.route.length == zoneRoute.route.length &&
 			this.route.every((r, i) => r == zoneRoute.route[i]) &&
+			this.require.length === zoneRoute.require.length &&
 			// ts is really bad at arrays which hold multiple incompatible types.
-			Object.entries(this.require).every(([key, value]: any[]) => zoneRoute.require[key].name == value.name && zoneRoute.require[key].count == value.count)
+			Object.entries(this.require).every(
+				([key, value]: any[]) => zoneRoute.require[key].name == value.name && zoneRoute.require[key].count == value.count
+			)
 		);
 	}
 
@@ -166,11 +169,8 @@ function clearUnusedZoneRoutes(zone: number | null = null) {
 	zones.forEach(z => {
 		if (zone !== null && zone != z.index) return;
 		let currentRoute = (z.queues + "").replace(/(^|,)(.*?),\2(,|$)/, "$1");
-		z.routes = z.routes.filter(r =>
-			usedZoneRoutes.includes(r)
-			|| ((r.route + "").replace(/(^|,)(.*?),\2(,|$)/, "$1") == currentRoute)
-			|| r.realm != currentRealm
-			|| r.isLocked
+		z.routes = z.routes.filter(
+			r => usedZoneRoutes.includes(r) || (r.route + "").replace(/(^|,)(.*?),\2(,|$)/, "$1") == currentRoute || r.realm != currentRealm || r.isLocked
 		);
 		z.routesChanged = true;
 		z.display();

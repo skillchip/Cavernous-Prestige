@@ -16,7 +16,7 @@ const settings = {
     statGrindPerSec: false,
     longWait: 5000,
     minStatGain: 0,
-    pauseOnPortal: false,
+    pauseOnPortal: false
 };
 function setSetting(toggler, value, ...args) {
     for (let i = 0; i < 99; i++) {
@@ -173,84 +173,84 @@ function viewConfig() {
 /************************** Keybindings ******************************/
 const fixedKeybindings = {
     // Clone selection
-    ">Digit1": (e) => selectClone(0, e),
-    ">Digit2": (e) => selectClone(1, e),
-    ">Digit3": (e) => selectClone(2, e),
-    ">Digit4": (e) => selectClone(3, e),
-    ">Digit5": (e) => selectClone(4, e),
-    ">Digit6": (e) => selectClone(5, e),
-    ">Digit7": (e) => selectClone(6, e),
-    ">Digit8": (e) => selectClone(7, e),
-    ">Digit9": (e) => selectClone(8, e),
-    "^>Digit1": (e) => selectClone(0, e),
-    "^>Digit2": (e) => selectClone(1, e),
-    "^>Digit3": (e) => selectClone(2, e),
-    "^>Digit4": (e) => selectClone(3, e),
-    "^>Digit5": (e) => selectClone(4, e),
-    "^>Digit6": (e) => selectClone(5, e),
-    "^>Digit7": (e) => selectClone(6, e),
-    "^>Digit8": (e) => selectClone(7, e),
-    "^>Digit9": (e) => selectClone(8, e),
-    "Tab": (e) => {
+    ">Digit1": e => selectClone(0, e),
+    ">Digit2": e => selectClone(1, e),
+    ">Digit3": e => selectClone(2, e),
+    ">Digit4": e => selectClone(3, e),
+    ">Digit5": e => selectClone(4, e),
+    ">Digit6": e => selectClone(5, e),
+    ">Digit7": e => selectClone(6, e),
+    ">Digit8": e => selectClone(7, e),
+    ">Digit9": e => selectClone(8, e),
+    "^>Digit1": e => selectClone(0, e),
+    "^>Digit2": e => selectClone(1, e),
+    "^>Digit3": e => selectClone(2, e),
+    "^>Digit4": e => selectClone(3, e),
+    "^>Digit5": e => selectClone(4, e),
+    "^>Digit6": e => selectClone(5, e),
+    "^>Digit7": e => selectClone(6, e),
+    "^>Digit8": e => selectClone(7, e),
+    "^>Digit9": e => selectClone(8, e),
+    Tab: (e) => {
         const previous = zones[currentZone].queues.findIndex(q => q.selected);
-        zones[currentZone].queues.forEach((q, i) => q.selected = i == (previous + 1) % clones.length);
+        zones[currentZone].queues.forEach((q, i) => (q.selected = i == (previous + 1) % clones.length));
         clones[zones[currentZone].queues.findIndex(q => q.selected)].writeStats();
         e.stopPropagation();
     },
     ">Tab": (e) => {
         const previous = zones[currentZone].queues.findIndex(q => q.selected);
-        zones[currentZone].queues.forEach((q, i) => q.selected = previous == (i + 1) % clones.length);
+        zones[currentZone].queues.forEach((q, i) => (q.selected = previous == (i + 1) % clones.length));
         clones[zones[currentZone].queues.findIndex(q => q.selected)].writeStats();
         e.stopPropagation();
     },
     // Rune actions
-    "Digit1": () => addRuneAction(0),
-    "Digit2": () => addRuneAction(1),
-    "Digit3": () => addRuneAction(2),
-    "Digit4": () => addRuneAction(3),
-    "Digit5": () => addRuneAction(4),
-    "Digit6": () => addRuneAction(5),
-    "Numpad1": () => addRuneAction(0),
-    "Numpad2": () => addRuneAction(1),
-    "Numpad3": () => addRuneAction(2),
-    "Numpad4": () => addRuneAction(3),
-    "Numpad5": () => addRuneAction(4),
-    "Numpad6": () => addRuneAction(5),
+    Digit1: () => addRuneAction(0),
+    Digit2: () => addRuneAction(1),
+    Digit3: () => addRuneAction(2),
+    Digit4: () => addRuneAction(3),
+    Digit5: () => addRuneAction(4),
+    Digit6: () => addRuneAction(5),
+    Numpad1: () => addRuneAction(0),
+    Numpad2: () => addRuneAction(1),
+    Numpad3: () => addRuneAction(2),
+    Numpad4: () => addRuneAction(3),
+    Numpad5: () => addRuneAction(4),
+    Numpad6: () => addRuneAction(5),
     // Utility
-    "Escape": () => hideMessages(),
-    "Enter": () => hideMessages(),
-    "Backspace": () => addActionToQueue("B"),
-    "Delete": () => addActionToQueue("b"),
+    Escape: () => hideMessages(),
+    Enter: () => hideMessages(),
+    Backspace: () => addActionToQueue("B"),
+    Delete: () => addActionToQueue("b"),
     "^Backspace": () => clearQueues(),
-    "^KeyA": () => zones[currentZone].queues.forEach(q => [q.selected, q.cursor] = [true, null]),
-    "End": () => zones[displayZone].queues.forEach(q => q.cursor = null),
-    "Home": () => zones[displayZone].queues.forEach(q => q.cursor = -1),
+    "^KeyA": () => zones[currentZone].queues.forEach(q => ([q.selected, q.cursor] = [true, null])),
+    End: () => zones[displayZone].queues.forEach(q => (q.cursor = null)),
+    Home: () => zones[displayZone].queues.forEach(q => (q.cursor = -1))
 };
 const adjustableKeybindings = {
     // Actions
-    "ArrowLeft": () => addActionToQueue("L"),
-    "ArrowUp": () => addActionToQueue("U"),
-    "ArrowRight": () => addActionToQueue("R"),
-    "ArrowDown": () => addActionToQueue("D"),
-    "Space": () => addActionToQueue("I"),
+    ArrowLeft: () => addActionToQueue("L"),
+    ArrowUp: () => addActionToQueue("U"),
+    ArrowRight: () => addActionToQueue("R"),
+    ArrowDown: () => addActionToQueue("D"),
+    Space: () => addActionToQueue("I"),
     "^Space": () => addActionToQueue("T"),
     // Flow
-    "Equal": () => addActionToQueue("="),
+    Equal: () => addActionToQueue("="),
     ">Equal": () => addActionToQueue("+"),
-    "NumpadAdd": () => addActionToQueue("+"),
-    "Period": () => addActionToQueue("."),
-    "Comma": () => addActionToQueue(","),
+    NumpadAdd: () => addActionToQueue("+"),
+    Period: () => addActionToQueue("."),
+    Comma: () => addActionToQueue(","),
     ">Comma": () => addActionToQueue("<"),
     ">Semicolon": () => addActionToQueue(":"),
-    "Semicolon": () => addActionToQueue(":"),
+    Semicolon: () => addActionToQueue(":"),
     // Config
-    "KeyP": () => toggleRunning(),
-    "KeyB": () => toggleBankedTime(),
-    "KeyG": () => toggleGrindMana(),
-    "KeyZ": () => toggleFollowZone(),
-    "KeyL": () => togglePauseOnPortal(),
-    "KeyQ": () => toggleLoadPrereqs(),
-    "KeyW": () => {
+    KeyP: () => toggleRunning(),
+    KeyB: () => toggleBankedTime(),
+    KeyG: () => toggleGrindMana(),
+    KeyZ: () => toggleFollowZone(),
+    KeyL: () => togglePauseOnPortal(),
+    KeyQ: () => toggleLoadPrereqs(),
+    KeyW: () => {
         if (settings.useWASD) {
             addActionToQueue("U");
         }
@@ -258,12 +258,12 @@ const adjustableKeybindings = {
             toggleAutoRestart();
         }
     },
-    "KeyA": () => {
+    KeyA: () => {
         if (settings.useWASD) {
             addActionToQueue("L");
         }
     },
-    "KeyS": () => {
+    KeyS: () => {
         if (settings.useWASD) {
             addActionToQueue("D");
         }
@@ -271,23 +271,23 @@ const adjustableKeybindings = {
             toggleGrindStats();
         }
     },
-    "KeyD": () => {
+    KeyD: () => {
         if (settings.useWASD) {
             addActionToQueue("R");
         }
     },
-    "KeyR": () => {
+    KeyR: () => {
         if (getStat("Mana").base == 5) {
             hideMessages();
         }
         resetLoop();
     },
-    "KeyC": () => {
+    KeyC: () => {
         if (settings.useWASD) {
             toggleAutoRestart();
         }
     },
-    "KeyT": () => {
+    KeyT: () => {
         if (settings.useWASD) {
             toggleGrindStats();
         }
@@ -304,22 +304,22 @@ const adjustableKeybindings = {
         let queues = zones[displayZone].queues;
         document.querySelectorAll(`.selected-clone`).forEach(n => n.classList.remove("selected-clone"));
         for (let i = 1; i < clones.length; i++) {
-            if (!queues.some(q => q.index == i - 1) && queues.some(q => q.index == i ? q.index-- + Infinity : false)) {
+            if (!queues.some(q => q.index == i - 1) && queues.some(q => (q.index == i ? q.index-- + Infinity : false))) {
                 [queues[i], queues[i - 1]] = [queues[i - 1], queues[i]];
             }
         }
-        queues.forEach(q => q.selected = true);
+        queues.forEach(q => (q.selected = true));
         redrawQueues();
     },
     "^ArrowUp": () => {
         let queues = zones[displayZone].queues;
         document.querySelectorAll(`.selected-clone`).forEach(n => n.classList.remove("selected-clone"));
         for (let i = 1; i < clones.length; i++) {
-            if (!queues.some(q => q.index == i - 1) && queues.some(q => q.index == i ? q.index-- + Infinity : false)) {
+            if (!queues.some(q => q.index == i - 1) && queues.some(q => (q.index == i ? q.index-- + Infinity : false))) {
                 [queues[i], queues[i - 1]] = [queues[i - 1], queues[i]];
             }
         }
-        queues.forEach(q => q.selected = true);
+        queues.forEach(q => (q.selected = true));
         redrawQueues();
     },
     "^KeyS": () => {
@@ -328,30 +328,30 @@ const adjustableKeybindings = {
         let queues = zones[displayZone].queues;
         document.querySelectorAll(`.selected-clone`).forEach(n => n.classList.remove("selected-clone"));
         for (let i = 1; i < clones.length; i++) {
-            if (!queues.some(q => q.index == i - 1) && queues.some(q => q.index == i ? q.index-- + Infinity : false)) {
+            if (!queues.some(q => q.index == i - 1) && queues.some(q => (q.index == i ? q.index-- + Infinity : false))) {
                 [queues[i], queues[i - 1]] = [queues[i - 1], queues[i]];
             }
         }
-        queues.forEach(q => q.selected = true);
+        queues.forEach(q => (q.selected = true));
         redrawQueues();
     },
     "^ArrowDown": () => {
         let queues = zones[displayZone].queues;
         document.querySelectorAll(`.selected-clone`).forEach(n => n.classList.remove("selected-clone"));
         for (let i = clones.length - 2; i >= 0; i--) {
-            if (!queues.some(q => q.index == i + 1) && queues.some(q => q.index == i ? q.index++ + Infinity : false)) {
+            if (!queues.some(q => q.index == i + 1) && queues.some(q => (q.index == i ? q.index++ + Infinity : false))) {
                 [queues[i], queues[i + 1]] = [queues[i + 1], queues[i]];
             }
         }
-        queues.forEach(q => q.selected = true);
+        queues.forEach(q => (q.selected = true));
         redrawQueues();
     },
-    "KeyF": () => {
+    KeyF: () => {
         if (visibleX === null || visibleY === null)
             return;
         addActionToQueue(`P${visibleX}:${visibleY};`);
         document.activeElement.blur();
-    },
+    }
 };
 setTimeout(() => {
     document.body.onkeydown = e => {

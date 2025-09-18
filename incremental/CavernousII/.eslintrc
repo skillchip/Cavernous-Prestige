@@ -113,7 +113,7 @@
 			}
 		],
 		"no-throw-literal": "error",
-		"no-trailing-spaces": "on",
+		"no-trailing-spaces": "error",
 		"no-undef-init": "error",
 		"no-underscore-dangle": "off",
 		"no-var": "error",

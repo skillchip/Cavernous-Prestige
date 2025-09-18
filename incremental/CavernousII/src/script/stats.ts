@@ -58,7 +58,8 @@ class Stat<statName extends anyStatName> {
 		if (!this.learnable) {
 			return;
 		}
-		const scalingStart = 99 + getRealmMult("Compounding Realm");
+		const scalingStart =
+			99 + getRealmMult("Compounding Realm") * (1 + prestige[5].level) + prestige[5].level * 20; /* Prestige place to add Scaling Stat bonus */
 		const val = (this.current + 1) ** (0.9 * (this.base > scalingStart ? scalingStart / this.base : 1) ** 0.05) - (this.base + 1);
 		if (val < 0) {
 			return;
@@ -67,15 +68,17 @@ class Stat<statName extends anyStatName> {
 		if (prevVal < 0) {
 			prevVal = 0;
 		}
-		const increase = (val - prevVal) / this.statIncreaseDivisor * (0.99 + getRealmMult("Compounding Realm") / 100);
+		const increase =
+			((val - prevVal) / this.statIncreaseDivisor) *
+			(0.99 + (getRealmMult("Compounding Realm") * (1 + prestige[5].level)) / 100 + (prestige[5].level * 20) / 100);
 		this.base += increase;
 	}
 
 	setStat(amount: number): void {
-		if (isNaN(+amount)) {
+		// Combat stats don't decrease during one loop.
+		if (isNaN(+amount) || this.base + amount < this.current) {
 			return;
 		}
-		// For combat stats.
 		this.current = this.base + amount;
 		this.dirty = true;
 		this.update();
@@ -136,13 +139,16 @@ class Stat<statName extends anyStatName> {
 				this.lastIncreaseUpdate = this.base;
 			}
 			const grindRoute = GrindRoute.getBestRoute(this.name);
-			this.descriptionNode.innerText = `${this.description} (${writeNumber(100 - this.value * 100, 1)}%)
+			this.descriptionNode.innerText =
+				`${this.description} (${writeNumber(100 - this.value * 100, 1)}%)
 			Increase at: ${writeNumber(increaseRequired, 2)}
-			Current: ${writeNumber(this.current, 2)} + ${writeNumber(this.current < 100 ? this.bonus : this.current * (100 + this.bonus) / 100 - this.current, 2)}` +
-			(grindRoute ? `
+			Current: ${writeNumber(this.current, 2)} + ${writeNumber(this.current < 100 ? this.bonus : (this.current * (100 + this.bonus)) / 100 - this.current, 2)}` +
+				(grindRoute
+					? `
 			Click to load best grind route (projected +${writeNumber(grindRoute?.projectedGain || 0, 3)}) in ${writeNumber(grindRoute?.totalTime / 1000 || 0, 1)}s
 			This route is in the ${realms[grindRoute.realm].name}.
-			Ctrl-click to delete this stat's grind route.` : "");
+			Ctrl-click to delete this stat's grind route.`
+					: "");
 		}
 		this.dirty = false;
 	}
@@ -169,7 +175,7 @@ class Stat<statName extends anyStatName> {
 
 	loadGrindRoute(event: KeyboardEvent | MouseEvent) {
 		if (!this.learnable) return;
-		if (event?.ctrlKey || event?.metaKey){
+		if (event?.ctrlKey || event?.metaKey) {
 			GrindRoute.deleteRoute(this.name);
 			this.dirty = true;
 			this.update();
@@ -213,9 +219,22 @@ class Stat<statName extends anyStatName> {
 	}
 }
 
-type anyStatName = "Mana" | "Mining" | "Woodcutting" | "Magic" | "Speed" | "Smithing" | "Runic Lore" | "Combat" | "Gemcraft" | "Chronomancy" | "Attack" | "Defense" | "Health";
+type anyStatName =
+	| "Mana"
+	| "Mining"
+	| "Woodcutting"
+	| "Magic"
+	| "Speed"
+	| "Smithing"
+	| "Runic Lore"
+	| "Combat"
+	| "Gemcraft"
+	| "Chronomancy"
+	| "Attack"
+	| "Defense"
+	| "Health";
 
-const stats:Stat<anyStatName>[] = [
+const stats: Stat<anyStatName>[] = [
 	new Stat("Mana", "", "How long you can resist being pulled back to your cave.  Also increases the maximum speed the game runs at.", MANA_START, false),
 	new Stat("Mining", "⛏", "Your skill at mining, reducing the time it takes to do mining-type tasks."),
 	new Stat("Woodcutting", "", "How good you are at chopping down mushrooms of various kinds."),
@@ -235,8 +254,11 @@ function getStat<nameType extends anyStatName>(name: nameType): Stat<nameType> {
 	return stats.find(a => a.name === name) as Stat<nameType>;
 }
 
-function getBaseMana(zone: number = currentZone, realm: number = currentRealm): number{
-	return MANA_START + zones.reduce((a, z, i) => {
-		return i > zone ? a : a + z.cacheManaGain[realm]
-	}, 0)
+function getBaseMana(zone: number = currentZone, realm: number = currentRealm): number {
+	return (
+		MANA_START +
+		zones.reduce((a, z, i) => {
+			return i > zone ? a : a + z.cacheManaGain[realm];
+		}, 0)
+	);
 }

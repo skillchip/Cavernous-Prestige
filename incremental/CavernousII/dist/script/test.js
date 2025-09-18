@@ -13,7 +13,6 @@ var TestResult;
     TestResult[TestResult["Errored"] = 1] = "Errored";
     TestResult[TestResult["Failure"] = 2] = "Failure";
 })(TestResult || (TestResult = {}));
-;
 function nextTest() {
     const url = new URL(document.location.href);
     url.searchParams.set("test", runTests.toString());
@@ -39,7 +38,7 @@ const tests = [
             queue.addAction("R");
             queue.addAction("U");
             assertEqual(false, queue.hasFutureSync());
-            queue.forEach(a => a.done = ActionStatus.Complete);
+            queue.forEach(a => (a.done = ActionStatus.Complete));
             assertEqual(false, queue.hasFutureSync());
             queue.forEach(a => a.reset());
             queue.addAction("=");
@@ -47,10 +46,10 @@ const tests = [
             queue[0].done = ActionStatus.Complete;
             queue[1].done = ActionStatus.Complete;
             assertEqual(true, queue.hasFutureSync());
-            queue.forEach(a => a.done = ActionStatus.Complete);
+            queue.forEach(a => (a.done = ActionStatus.Complete));
             queue.addAction("D");
             assertEqual(false, queue.hasFutureSync());
-        },
+        }
     },
     {
         name: "GetCorrectNextAction",
@@ -61,14 +60,14 @@ const tests = [
             queue.addAction("R");
             queue.addAction("U");
             assertEqual("L", queue.getNextAction());
-            queue.forEach(a => a.done = ActionStatus.Complete);
+            queue.forEach(a => (a.done = ActionStatus.Complete));
             assertEqual(null, queue.getNextAction());
             queue.addAction("I");
             assertEqual("I", queue.getNextAction());
             queue.cursor = 1;
             queue.addAction("D");
             assertEqual("I", queue.getNextAction());
-        },
+        }
     },
     {
         name: "LoadsFromString",
@@ -77,7 +76,7 @@ const tests = [
             queue.fromString("UDLRIP1:-2;P-3:0;N4;<=.,:T");
             assertEqual("UDLRIP1:-2;P-3:0;N4;<=.,:T", queue.toString());
             assertEqual(14, queue.length);
-        },
+        }
     },
     /************************************************ Stuff *********************************************/
     {
@@ -95,7 +94,7 @@ const tests = [
             gem.update(1.5);
             assertEqual(7.5, magic.bonus);
             assertEqual(100 / 315, magic.value);
-        },
+        }
     },
     {
         name: "HealthEtcAreProperlyCalculated",
@@ -104,7 +103,9 @@ const tests = [
             let ironShield = getStuff("Iron Shield"), steelShield = getStuff("Steel Shield"), plus1Shield = getStuff("+1 Shield");
             let ironArmour = getStuff("Iron Armour"), steelArmour = getStuff("Steel Armour"), plus1Armour = getStuff("+1 Armour");
             let health = getStat("Health"), attack = getStat("Attack"), defense = getStat("Defense");
-            clones = Array(5).fill(0).map((x, i) => new Clone(i));
+            clones = Array(5)
+                .fill(0)
+                .map((x, i) => new Clone(i));
             ironSword.update(1);
             assertEqual(1, attack.current);
             steelSword.update(2);
@@ -123,15 +124,19 @@ const tests = [
             assertEqual(45, health.current);
             plus1Armour.update(3);
             assertEqual(115, health.current);
-        },
+        }
     },
     /************************************************ Integration *********************************************/
     {
         name: "ManyActionsAreNotSkipped",
         reloadBefore: true,
         test: async () => {
-            clones = Array(10).fill(0).map((x, i) => new Clone(i));
-            zones[0].queues.forEach((q, i) => i == 0 ? q.fromString("RRRRRT") : q.fromString("RRRRRIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"));
+            clones = Array(10)
+                .fill(0)
+                .map((x, i) => new Clone(i));
+            zones[0].queues.forEach((q, i) => i == 0
+                ? q.fromString("RRRRRT")
+                : q.fromString("RRRRRIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"));
             getStat("Magic").base = 1000;
             getStat("Mining").base = 1000;
             getStat("Speed").base = 500;
@@ -146,13 +151,15 @@ const tests = [
                 assertEqual(null, q.getNextAction());
             });
             assertEqual(0, getStuff("Gold Nugget").count);
-        },
+        }
     },
     {
         name: "SyncsHaveNoLatency",
         reloadBefore: true,
         test: async () => {
-            clones = Array(3).fill(0).map((x, i) => new Clone(i));
+            clones = Array(3)
+                .fill(0)
+                .map((x, i) => new Clone(i));
             zones[0].queues[0].fromString("R=RR=R");
             zones[0].queues[1].fromString("+RR+RR=");
             zones[0].queues[2].fromString("R==R");
@@ -165,13 +172,15 @@ const tests = [
             zones[0].queues.forEach(q => {
                 assertEqual(null, q.getNextAction());
             });
-        },
+        }
     },
     {
         name: "ProperKudzus",
         reloadBefore: true,
         test: async () => {
-            clones = Array(5).fill(0).map((x, i) => new Clone(i));
+            clones = Array(5)
+                .fill(0)
+                .map((x, i) => new Clone(i));
             zones[0].queues.forEach(q => q.fromString("RRRRRDDDD"));
             resetLoop();
             getStat("Mana").current = 3.33;
@@ -183,13 +192,15 @@ const tests = [
             zones[0].queues.forEach(q => {
                 assertEqual(null, q.getNextAction());
             });
-        },
+        }
     },
     {
         name: "WitherWorksOnOldKudzus",
         reloadBefore: true,
         test: async () => {
-            clones = Array(5).fill(0).map((x, i) => new Clone(i));
+            clones = Array(5)
+                .fill(0)
+                .map((x, i) => new Clone(i));
             zones[0].queues.forEach(q => q.fromString("RRRRRDDN1;IDN1;I"));
             resetLoop();
             getStat("Mana").current = 10;
@@ -204,13 +215,15 @@ const tests = [
             zones[0].queues.forEach(q => {
                 assertEqual(null, q.getNextAction());
             });
-        },
+        }
     },
     {
         name: "IronBridgesWorkProperlyOnLava",
         reloadBefore: true,
         test: async () => {
-            clones = Array(2).fill(0).map((x, i) => new Clone(i));
+            clones = Array(2)
+                .fill(0)
+                .map((x, i) => new Clone(i));
             zones[0].queues.forEach(q => q.fromString("RRR"));
             resetLoop();
             setMined(2, 0, "~");
@@ -227,7 +240,7 @@ const tests = [
             clones.forEach(c => {
                 assertEqual(3, c.x);
             });
-        },
+        }
     },
     {
         name: "CanPathfind",
@@ -312,11 +325,11 @@ const tests = [
             assertEqual(null, zones[0].queues[0].getNextAction());
             assertEqual(6, clones[0].x);
             assertEqual(7, clones[0].y);
-        },
-    },
+        }
+    }
 ];
 function decycle(obj, stack = []) {
-    if (!obj || typeof obj !== 'object')
+    if (!obj || typeof obj !== "object")
         return obj;
     if (stack.includes(obj))
         return null;
@@ -347,14 +360,14 @@ setTimeout(async () => {
                 if (!errors.length) {
                     testResults.push({
                         name: tests[runTests].name,
-                        result: TestResult.Success,
+                        result: TestResult.Success
                     });
                 }
                 else {
                     testResults.push({
                         name: tests[runTests].name,
                         result: TestResult.Failure,
-                        assertions: errors,
+                        assertions: errors
                     });
                 }
             }
@@ -362,7 +375,7 @@ setTimeout(async () => {
                 testResults.push({
                     name: tests[runTests].name,
                     result: TestResult.Errored,
-                    error: e,
+                    error: e
                 });
             }
         }
@@ -375,7 +388,7 @@ setTimeout(async () => {
     }
     else {
         const counts = [0, 0, 0];
-        testResults.forEach((c) => counts[c.result] += 1);
+        testResults.forEach((c) => (counts[c.result] += 1));
         console.log("Tests complete!");
         console.log(`Successful: ${counts[TestResult.Success]}
 Failed: ${counts[TestResult.Failure]}

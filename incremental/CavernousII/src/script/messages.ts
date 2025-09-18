@@ -1,4 +1,4 @@
-let suppressMessages = (new URL(document.location.href).searchParams).get("messages") == "disabled";
+let suppressMessages = new URL(document.location.href).searchParams.get("messages") == "disabled";
 
 const messageBox: HTMLElement =
 	document.querySelector("#message-box") ??
@@ -158,7 +158,7 @@ const messages = [
 			You've created your first clone!  It can carry out actions in exactly the same way you can.
 			You can create more clones by bringing more gold to a Clone Machine.  Click on a Clone Machine to find out how much the next clone costs.
 			Your clones can act independently or help each other out by cooperating on the same task.  Keeping them idle doesn't save you any mana.
-			Two clones can work in the same space, taking slightly more than half the time it takes one clone to complete the job (they don't help each other walk around).
+			Two clones can work in the same space, taking half the time it takes one clone to complete the job (they don't help each other walk around).
 
 			Use CTRL-click to select more than one clone or CTRL-A to select them all.  Tab rotates through them.`
 	),
@@ -328,5 +328,5 @@ const messages = [
 			There may be, in the future, further updates to this game.
 			It is highly likely, however, that those updates will be in the form of Cavernous III.
 			Thanks for playing!`
-	),
+	)
 ];

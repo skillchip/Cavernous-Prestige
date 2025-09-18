@@ -5,7 +5,6 @@ var CanStartReturnCode;
     CanStartReturnCode[CanStartReturnCode["NotNow"] = 1] = "NotNow";
     CanStartReturnCode[CanStartReturnCode["Now"] = 2] = "Now";
 })(CanStartReturnCode || (CanStartReturnCode = {}));
-;
 var ActionStatus;
 (function (ActionStatus) {
     ActionStatus[ActionStatus["NotStarted"] = 0] = "NotStarted";
@@ -13,5 +12,4 @@ var ActionStatus;
     ActionStatus[ActionStatus["Waiting"] = 2] = "Waiting";
     ActionStatus[ActionStatus["Complete"] = 3] = "Complete";
 })(ActionStatus || (ActionStatus = {}));
-;
 //# sourceMappingURL=util.js.map
