@@ -208,21 +208,20 @@ function resetLoop(noLoad = false, saveGame = true) {
         return;
     shouldReset = false;
     resetting = true;
-    const mana = getStat("Mana"); /* Prestige These messages could be removed after first game completion */
-    if (getMessage("Time Travel").display(zones[0].manaGain == 0 && realms[currentRealm].name == "Core Realm" && prestigecount == 0))
+    const mana = getStat("Mana"); /* Cleaned up my additions as is handled during initilization */
+    if (getMessage("Time Travel").display(zones[0].manaGain == 0 && realms[currentRealm].name == "Core Realm"))
         setSetting(toggleAutoRestart, 3);
     else
-        if (prestigecount == 0) /* Prestige - added if to see if it gets rid of this message */
         getMessage("Persisted Programming").display();
-    if (mana.base == 5.5 && prestigecount == 0)
+    if (mana.base == 5.5)
         getMessage("The Looping of Looping Loops").display() && setSetting(toggleAutoRestart, 1);
-    if (mana.base == 6 && prestigecount == 0)
+    if (mana.base == 6)
         getMessage("Strip Mining").display();
-    if (mana.base == 7.4 && prestigecount == 0)
+    if (mana.base == 7.4)
         getMessage("Buy More Time").display();
-    if (routes.length == 3 && prestigecount == 0)
+    if (routes.length == 3)
         getMessage("All the known ways").display() && setSetting(toggleGrindMana, true);
-    if (queueTime > 50000 && prestigecount == 0)
+    if (queueTime > 50000)
         getMessage("Looper's Log: Supplemental").display();
     if (mana.current > 0) {
         currentLoopLog.finalize();
@@ -578,8 +577,7 @@ setInterval(function mainLoop() {
                 }
             });
             currentLoopLog.finalize();
-            if (prestigecount==0) /*Prestige - added to remove out of mana message maybe */
-                getMessage("Out of Mana").display();
+            getMessage("Out of Mana").display();
             if (settings.autoRestart == AutoRestart.RestartAlways || (settings.autoRestart == AutoRestart.RestartDone && clones.every(c => c.repeated))) {
                 resetLoop();
             }
