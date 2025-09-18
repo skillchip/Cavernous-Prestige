@@ -152,7 +152,7 @@ class Zone {
             });
         }
         this.display();
-        currentLoopLog.moveZone(`z${this.index + 1}`);
+        currentLoopLog.moveZone();
     }
     sumRoute(require, startDamage, actionCount) {
         let routeOptions = this.routes
@@ -416,7 +416,6 @@ function moveToZone(zone, complete = true) {
         clearCursors();
     }
     currentZone = zone;
-    document.querySelector("#barrier-mult").style.display = "none";
     zones[zone].enterZone();
 }
 function recalculateMana() {
@@ -614,11 +613,11 @@ const zones = [
     }),
     new Zone("Zone 8", [
         "████████████████",
-        "███████■☼■█■■■■█",
-        "███§§¤■§☼§█++♥■█",
-        "███G███§■§■■■■■█",
-        "██+^+███■██++■■█",
-        "███2███¤+=█■■■██",
+        "███████■☼■██████",
+        "███§§¤■§☼§█++♥██",
+        "███G███§■§■■■■██",
+        "██+^+███■██++███",
+        "███2███¤+=██████",
         "███2████+███████",
         "██+++██#G#█δ3δ██",
         "███■███♣.♣123X!█",

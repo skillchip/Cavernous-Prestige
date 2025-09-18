@@ -194,9 +194,6 @@ function resetLoop(noLoad = false, saveGame = true) {
     if (mana.current > 0) {
         currentLoopLog.finalize();
     }
-    stuff.forEach(s => {
-        s.count = 0;
-    });
     stats.forEach((s, i) => {
         s.reset();
         s.update();
@@ -297,7 +294,6 @@ let save = async function save() {
     const machines = realms.map(r => r.machineCompletions);
     const realmData = realms.map(r => {
         return {
-            maxMult: r.maxMult,
             completed: r.completed,
         };
     });
@@ -405,8 +401,6 @@ function load() {
         recalculateMana();
     }
     saveGame.realmData?.forEach((r, i) => {
-        if (r.maxMult)
-            realms[i].maxMult = r.maxMult;
         if (r.completed)
             realms[i].complete();
     });

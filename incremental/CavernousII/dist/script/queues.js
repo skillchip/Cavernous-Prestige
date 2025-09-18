@@ -227,8 +227,6 @@ class QueueAction {
         this.drawProgress();
     }
     complete() {
-        if (this.currentAction?.remainingDuration === 0)
-            this.currentAction = null;
         this.done = this.actionID == "T" ? ActionStatus.NotStarted : ActionStatus.Complete;
         if (this.done == ActionStatus.Complete)
             currentLoopLog.addQueueAction(this.currentClone.id, this.actionID);
@@ -722,6 +720,7 @@ function importQueues() {
     }
 }
 function longImportQueues(queueString) {
+    console.log(queueString);
     if (!queueString) {
         queueString = prompt("Input your queues");
         if (!queueString)
