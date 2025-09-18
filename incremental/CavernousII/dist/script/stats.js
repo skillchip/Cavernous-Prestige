@@ -54,10 +54,10 @@ class Stat {
         this.base += increase;
     }
     setStat(amount) {
-        // Combat stats don't decrease during one loop.
-        if (isNaN(+amount) || this.base + amount < this.current) {
+        if (isNaN(+amount)) {
             return;
         }
+        // For combat stats.
         this.current = this.base + amount;
         this.dirty = true;
         this.update();
