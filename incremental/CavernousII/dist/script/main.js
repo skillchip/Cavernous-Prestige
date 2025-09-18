@@ -155,46 +155,8 @@ function resetprogress() {
     window.location.reload();
     
 }
-/*function prestigeGame() { -- Dangerous, should fix
-    if(GameComplete == 1)
-    {
-        exportGame();
-        localStorage.removeItem(saveName);
-        load();
-        prestigepoints += 90;
-        GameComplete = 0;
-        save();
-    }
-}*/
 
-/*
-function BonusClones()
-{
-  
-}
-function FasterStats()
-{
-  
-}
-function ManaScaling()
-{
-  
-}
-function BonusResc()
-{
-  
-}
-function BetterEquip()
-{
-  
-}
-function SoftCap()
-{
-  
-}
-*/
-
-    // Fix Prestige Values for Hover - need help
+// Fix Prestige Values for Hover - need help
 /*
     let prestigenumber= document.querySelector("prestigenumber") = writeNumber(prestigecount);
     document.querySelector("prestigeval0") = writeNumber(prestige[0].level);
