@@ -121,10 +121,17 @@ function resetprogress() {
         s.base = 0;
         });
     stats[12].base=10;
+    /*reset realms*/
+    realms.forEach(re =>{
+        re.locked = true;
+        re.completed = false;
+        re.machineCompletions = 0;
+        });
     /*resets runes*/
     runes.forEach(r => {
         r.locked = true;
         r.node = null;
+        r.upgradeCount = 0;
         });
     /*clear route*/
     routes = [];
@@ -139,8 +146,6 @@ function resetprogress() {
     for(let i=0; i<prestige[0].level; ++i)
         {Clone.addNewClone();}
     /*Remove Message*/
-    /*for (let i = 0; i < messages.length; i++)
-        {messages[i].displayed=true;}*/
     messages.forEach(m => {
         m.displayed = true;
         });
