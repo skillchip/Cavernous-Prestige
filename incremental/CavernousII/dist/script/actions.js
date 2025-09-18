@@ -139,7 +139,8 @@ function completeMove(loc, clone, action) {
 }
 function completeMine(loc) {
     setMined(loc.x, loc.y);
-    getMessage("Digging").display();
+    if(prestigecount==0) /*Prestige - removed message*/
+        getMessage("Digging").display();
 }
 function getDuplicationAmount(loc) {
     let x = loc.x, y = loc.y;

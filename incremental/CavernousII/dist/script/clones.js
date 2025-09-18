@@ -164,14 +164,14 @@ class Clone {
     static addNewClone(loading = false) {
         const c = new Clone(clones.length);
         clones.push(c);
-        if (!loading) { /* Prestige add bypass */
-            if (clones.length == 2)
+        if (!loading) { /* Prestige add bypass, done by only showing on first prestige */
+            if (clones.length == 2 && prestigecount == 0)
                 getMessage("First Clone").display();
-            if (clones.length == 3)
+            if (clones.length == 3 && prestigecount == 0)
                 getMessage("Second Clone").display();
-            if (clones.length == 4)
+            if (clones.length == 4 && prestigecount == 0)
                 getMessage("Third Clone").display();
-            if (clones.length == 5)
+            if (clones.length == 5 && prestigecount == 0)
                 getMessage("Fourth Clone").display();
         }
         zones.forEach(z => {

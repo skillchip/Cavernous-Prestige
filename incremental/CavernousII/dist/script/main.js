@@ -138,6 +138,9 @@ function resetprogress() {
     Clone.addNewClone();
     for(let i=0; i<prestige[0].level; ++i)
         {Clone.addNewClone();}
+    /*Remove Message*/
+    for (let i = 0; i < Message.messages.length; i++)
+        {Message.messages[i].displayed=true;}
     resetLoop();
     save();
     window.location.reload();
@@ -206,6 +209,7 @@ function resetLoop(noLoad = false, saveGame = true) {
     if (getMessage("Time Travel").display(zones[0].manaGain == 0 && realms[currentRealm].name == "Core Realm" && prestigecount == 0))
         setSetting(toggleAutoRestart, 3);
     else
+        if (prestigecount == 0) /* Prestige - added if to see if it gets rid of this message */
         getMessage("Persisted Programming").display();
     if (mana.base == 5.5 && prestigecount == 0)
         getMessage("The Looping of Looping Loops").display() && setSetting(toggleAutoRestart, 1);
@@ -571,7 +575,8 @@ setInterval(function mainLoop() {
                 }
             });
             currentLoopLog.finalize();
-            getMessage("Out of Mana").display();
+            if (prestigecount==0) /*Prestige - added to remove out of mana message maybe */
+                getMessage("Out of Mana").display();
             if (settings.autoRestart == AutoRestart.RestartAlways || (settings.autoRestart == AutoRestart.RestartDone && clones.every(c => c.repeated))) {
                 resetLoop();
             }
