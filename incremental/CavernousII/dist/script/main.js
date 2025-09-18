@@ -177,7 +177,7 @@ function resetLoop(noLoad = false, saveGame = true) {
     shouldReset = false;
     resetting = true;
     const mana = getStat("Mana"); /* Cleaned up my additions as is handled during initilization */
-    if (getMessage("Time Travel").display(zones[0].manaGain == 0 && realms[currentRealm].name == "Core Realm") && prestigecount == 0)
+    if (getMessage("Time Travel").display(zones[0].manaGain == 0 && realms[currentRealm].name == "Core Realm" && prestigecount == 0))
         setSetting(toggleAutoRestart, 3);
     else
         getMessage("Persisted Programming").display();
