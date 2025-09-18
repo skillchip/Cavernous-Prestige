@@ -344,7 +344,8 @@ function tickFight(usedTime, loc, baseTime, clone) {
     if (!loc.creature)
         throw new Error("No creature to fight");
     let damage = (Math.max(loc.creature.attack - getStat("Defense").current, 0) * baseTime) / 1000;
-    if (loc.creature.defense >= getStat("Attack").current && loc.creature.attack <= getStat("Defense").current) {
+    /* Prestige - fixes edge case of taking fractional damage when unable to hurt enemy */
+    if (loc.creature.defense >= getStat("Attack").current && loc.creature.attack <= Math.ceil(getStat("Defense").current)) { 
         damage = baseTime / 1000;
     }
     clone.inCombat = true;
